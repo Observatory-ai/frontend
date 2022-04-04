@@ -4,14 +4,13 @@ export const BarChart = ({ data } : {data: any}) => (
     <ResponsiveBar
         data={data}
         keys={[
-            'hot dog',
-            'burger',
-            'sandwich',
-            'kebab',
-            'fries',
-            'donut'
+            'Meetings',
+            'Free Time',
+            'Fitness',
+            'Coding',
+            'Events',
         ]}
-        indexBy="country"
+        indexBy="Weekday"
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
@@ -60,13 +59,12 @@ export const BarChart = ({ data } : {data: any}) => (
                 ]
             ]
         }}
-        axisTop={null}
         axisRight={null}
         axisBottom={{
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'country',
+            legend: 'Weekday',
             legendPosition: 'middle',
             legendOffset: 32
         }}
@@ -74,7 +72,7 @@ export const BarChart = ({ data } : {data: any}) => (
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'food',
+            legend: 'Hours',
             legendPosition: 'middle',
             legendOffset: -40
         }}
@@ -114,7 +112,7 @@ export const BarChart = ({ data } : {data: any}) => (
             }
         ]}
         role="application"
-        ariaLabel="Nivo bar chart demo"
+        ariaLabel="Weekly hours spent on different activities"
         barAriaLabel={function(e){return e.id+": "+e.formattedValue+" in country: "+e.indexValue}}
     />
 )
