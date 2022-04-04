@@ -1,37 +1,53 @@
-import * as React from 'react';
-import Input from '@mui/material/Input';
-import '../App.css';
-import TextField from '@mui/material/TextField';
+import React, { Component } from "react";
+import "../App.css";
+import Input from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 
-const inputProps = {
-    step: 300,
+export default class App extends Component {
+  state = {
+    email: "",
+    password: ""
   };
 
-export default function SignupForm(){
-    const username = (
-        <React.Fragment>
-        <h1 className="font-link">Sign Up</h1>
-        <h2 className="font-link">First Name</h2>
-        <TextField id="firstname" type="text" inputProps={inputProps} />
-        <br></br>
-        <h2 className="font-link">Last Name</h2>
-        <TextField id="lastname" type="text" inputProps={inputProps} />
-        <br></br>
-        <h2 className="font-link">Email</h2>
-        <TextField id="email" type="text" inputProps={inputProps} />
-        <br></br>
-        <h2 className="font-link">Username</h2>
-        <TextField id="username" type="text" inputProps={inputProps} />
-        <br></br>
-        <h2 className="font-link">Password</h2>
-        <TextField id="password" type="text" inputProps={inputProps} />
-        <br></br>
-        <br></br>
-        <Button component={Link} to="/" variant="contained" className="font-link">Register</Button>
-        </React.Fragment>
-    )
-    
-    return username;
+
+  render() {
+    return (
+      <div className="App">
+        <form className="form">
+          
+        <Input
+            label="Name"
+            id="name"
+            type="text"
+            className="form_button"
+        />
+          
+          <Input
+            label="Email"
+            id="email"
+            type="text"
+            className="form_button"
+          />
+          <Input
+            label="Password"
+            id="password"
+            type="password"
+            className="form_button"
+          />
+
+          <Input
+            label="Confirm Password"
+            id="confirmpassword"
+            type="password"
+            className="form_button"
+          />
+
+          <Button component={Link} to="/" variant="contained" type="button" color="primary" className="form_button">
+            Log in
+          </Button>
+        </form>
+      </div>
+    );
   }
+}
