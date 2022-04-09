@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import { useFormik } from "formik";
 import { useState } from "react";
-import { Visibility, VisibilityOff, PhotoCamera } from "@material-ui/icons";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 import * as Yup from "yup";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import {
@@ -15,7 +15,9 @@ import {
 	IconButton,
 	Grid,
 	Stack,
+	Divider,
 } from "@mui/material";
+import Iconify from "./Iconify";
 
 export default function LoginForm() {
 	const theme = useTheme();
@@ -32,7 +34,6 @@ export default function LoginForm() {
 		},
 		form: {
 			width: "100%", // Fix IE 11 issue.
-			marginTop: theme.spacing(3),
 		},
 		submit: {
 			fontWeight: "bold",
@@ -64,13 +65,7 @@ export default function LoginForm() {
 	});
 
 	return (
-		<Container
-			style={{
-				boxShadow: theme.shadows[3],
-				borderRadius: theme.shape.borderRadius,
-				padding: theme.spacing(6),
-			}}
-			maxWidth='sm'>
+		<Container maxWidth='xs'>
 			<div style={classes.paper}>
 				<Avatar sx={classes.avatar}>
 					<LockOutlinedIcon />
@@ -78,11 +73,23 @@ export default function LoginForm() {
 				<Typography variant='h4' sx={{ fontWeight: "bold" }}>
 					Log in
 				</Typography>
-				<Stack>
-					<IconButton color='primary' aria-label='upload picture' component='span'>
-						<PhotoCamera />
-					</IconButton>
+				<Stack sx={{ marginTop: theme.spacing(4), width: "100%" }} direction='row' spacing={2}>
+					<Button fullWidth size='large' color='inherit' variant='outlined'>
+						{/*
+            // @ts-ignore */}
+						<Iconify icon='eva:google-fill' color='#DF3E30' height={24} />
+					</Button>
+					<Button fullWidth size='large' color='inherit' variant='outlined'>
+						{/*
+            // @ts-ignore */}
+						<Iconify icon='eva:facebook-fill' color='#1877F2' height={24} />
+					</Button>
 				</Stack>
+				<Divider sx={{ marginTop: 4, marginBottom: 3, width: "100%" }}>
+					<Typography variant='body1' sx={{ fontWeight: "bold" }}>
+						OR
+					</Typography>
+				</Divider>
 				<form style={classes.form} onSubmit={formik.handleSubmit}>
 					<TextField
 						required
