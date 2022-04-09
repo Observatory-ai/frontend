@@ -1,29 +1,38 @@
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@mui/material";
 
-const theme = createMuiTheme({
+let theme = createTheme({
 	palette: {
-		type: "dark",
+		mode: "light",
 		primary: {
-			main: "#292929", //#202020 #231F20
+			main: "#24212b",
 		},
 		secondary: {
-			main: "#11D39B",
+			main: "#ff5851",
 		},
 		background: {
-			paper: "#292929",
+			default: "#f4f5fe",
 		},
 	},
-	overrides: {
-		MuiCssBaseline: {
-			"@global": {
-				"*::-webkit-scrollbar": {
-					width: "0.7em",
+});
+
+theme = createTheme(theme, {
+	components: {
+		MuiTextField: {
+			styleOverrides: {
+				root: {
+					fontSize: "1rem",
 				},
-				"*::-webkit-scrollbar-track": {
-					background: "#303030",
-				},
-				"*::-webkit-scrollbar-thumb": {
-					background: "#6b6b6b",
+			},
+		},
+		MuiFormLabel: {
+			styleOverrides: {
+				root: {
+					asterisk: {
+						color: "#db3131",
+						"&$error": {
+							color: "#db3131",
+						},
+					},
 				},
 			},
 		},

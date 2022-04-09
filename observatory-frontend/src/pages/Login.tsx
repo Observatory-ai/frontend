@@ -11,11 +11,8 @@ function LoginPage() {
 			direction='column'
 			alignItems='center'
 			justifyContent='center'
-			//style={{ minHeight: '100vh' }
-		>
-			<Grid item xs={3}>
-				<LoginForm />
-			</Grid>
+			style={{ minHeight: "98vh" }}>
+			<LoginForm />
 		</Grid>
 	);
 }

@@ -6,12 +6,14 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@material-ui/core";
 import theme from "./theme";
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
 ReactDOM.render(
 	<React.StrictMode>
 		<ThemeProvider theme={theme}>
+			<CssBaseline />
 			<BrowserRouter>
 				<Routes>
 					<Route path='/dashboard' element={<App />} />
