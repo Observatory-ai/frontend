@@ -110,7 +110,7 @@ export default function LoginForm() {
 						required
 						variant='outlined'
 						margin='dense'
-						label='Password*'
+						label='Password'
 						type={showPassword ? "text" : "password"}
 						fullWidth
 						name='password'

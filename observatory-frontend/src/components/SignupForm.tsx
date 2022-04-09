@@ -12,11 +12,13 @@ import {
 	Link as MuiLink,
 	TextField,
 	Grid,
-	createStyles,
-	makeStyles,
-	Theme,
 	useTheme,
+	Stack,
+	Divider,
+	InputAdornment,
+	IconButton,
 } from "@mui/material";
+import Iconify from "./Iconify";
 
 export default function SignUpForm() {
 	const theme = useTheme();
@@ -39,13 +41,6 @@ export default function SignUpForm() {
 			fontWeight: "bold",
 			margin: theme.spacing(3, 0, 2),
 		},
-		signUp: {
-			textTransform: "unset",
-			color: theme.palette.common.white,
-			minWidth: "90px",
-			boxShadow: "3px 2px 9px 0px rgba(0,0,0,0.15)",
-			fontWeight: "bold",
-		},
 	};
 
 	const [showPassword, setShowPassword] = useState(false);
@@ -59,13 +54,20 @@ export default function SignUpForm() {
 	};
 
 	const signUpSchema = Yup.object().shape({
-		usernameOrEmail: Yup.string().required("Username or email can't be empty"),
-		password: Yup.string().required("Password can't be empty"),
+		firstName: Yup.string().required("First name is required"),
+		lastName: Yup.string().required("Last name is required"),
+		username: Yup.string().required("Username is required"),
+		email: Yup.string().email("Invalid email").required("Email is required"),
+		password: Yup.string().required("Password is required"),
+		confirmPassword: Yup.string().when("password", {
+			is: (val: [any]) => (val && val.length > 0 ? true : false),
+			then: Yup.string().oneOf([Yup.ref("password")], "Passwords do not match"),
+		}),
 	});
 
 	const formik = useFormik({
-		validationSchema: { signUpSchema },
-		initialValues: { usernameOrEmail: "", password: "" },
+		validationSchema: signUpSchema,
+		initialValues: { firstName: "", lastName: "", email: "", username: "", password: "", confirmPassword: "" },
 		onSubmit: async (values, { setErrors }) => {
 			console.log(values);
 		},
@@ -80,57 +82,140 @@ export default function SignUpForm() {
 				<Typography variant='h4' sx={{ fontWeight: "bold" }}>
 					Sign Up
 				</Typography>
-				<form style={classes.form} noValidate>
+				<Stack sx={{ marginTop: theme.spacing(4), width: "100%" }} direction='row' spacing={2}>
+					<Button fullWidth size='large' color='inherit' variant='outlined'>
+						{/*
+            // @ts-ignore */}
+						<Iconify icon='eva:google-fill' color='#DF3E30' height={24} />
+					</Button>
+					<Button fullWidth size='large' color='inherit' variant='outlined'>
+						{/*
+            // @ts-ignore */}
+						<Iconify icon='eva:facebook-fill' color='#1877F2' height={24} />
+					</Button>
+				</Stack>
+				<Divider sx={{ marginTop: 4, marginBottom: 3, width: "100%" }}>
+					<Typography variant='body1' sx={{ fontWeight: "bold" }}>
+						OR
+					</Typography>
+				</Divider>
+				<form style={classes.form} onSubmit={formik.handleSubmit}>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
 							<TextField
+								fullWidth
+								required
+								autoFocus
+								variant='outlined'
+								margin='dense'
+								label='First Name'
+								type='text'
 								autoComplete='fname'
 								name='firstName'
-								variant='outlined'
-								required
-								fullWidth
-								id='firstName'
-								label='First Name'
-								autoFocus
+								placeholder='First name'
+								onChange={formik.handleChange}
+								value={formik.values.firstName}
+								error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+								helperText={formik.touched.firstName && formik.errors.firstName}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
-								variant='outlined'
-								required
 								fullWidth
-								id='lastName'
+								required
+								variant='outlined'
+								margin='dense'
 								label='Last Name'
+								type='text'
 								name='lastName'
+								placeholder='Last name'
+								onChange={formik.handleChange}
+								value={formik.values.lastName}
+								error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+								helperText={formik.touched.lastName && formik.errors.lastName}
 								autoComplete='lname'
 							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
-								variant='outlined'
-								required
 								fullWidth
-								id='email'
-								label='Email Address'
+								required
+								variant='outlined'
+								margin='dense'
+								label='Email'
+								type='text'
 								name='email'
-								autoComplete='email'
+								placeholder='Email'
+								onChange={formik.handleChange}
+								value={formik.values.email}
+								error={formik.touched.email && Boolean(formik.errors.email)}
+								helperText={formik.touched.email && formik.errors.email}
 							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
-								variant='outlined'
+								fullWidth
 								required
+								variant='outlined'
+								margin='dense'
+								label='Username'
+								type='text'
+								name='username'
+								placeholder='Username'
+								onChange={formik.handleChange}
+								value={formik.values.username}
+								error={formik.touched.username && Boolean(formik.errors.username)}
+								helperText={formik.touched.username && formik.errors.username}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								required
+								variant='outlined'
+								margin='dense'
+								label='Password'
+								type={showPassword ? "text" : "password"}
 								fullWidth
 								name='password'
-								label='Password'
-								type='password'
-								id='password'
-								autoComplete='current-password'
+								placeholder='Password'
+								onChange={formik.handleChange}
+								value={formik.values.password}
+								error={formik.touched.password && Boolean(formik.errors.password)}
+								helperText={formik.touched.password && formik.errors.password}
+								InputProps={{
+									endAdornment: (
+										<InputAdornment position='end'>
+											<IconButton
+												aria-label='toggle password visibility'
+												onClick={handleClickShowPassword}
+												onMouseDown={handleMouseDownPassword}
+												edge='end'>
+												{showPassword ? <Visibility /> : <VisibilityOff />}
+											</IconButton>
+										</InputAdornment>
+									),
+								}}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								required
+								variant='outlined'
+								margin='dense'
+								label='Confirm password'
+								type={showPassword ? "text" : "password"}
+								fullWidth
+								name='confirmPassword'
+								placeholder='Confirm password'
+								onChange={formik.handleChange}
+								value={formik.values.confirmPassword}
+								error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+								helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
 							/>
 						</Grid>
 					</Grid>
-					<Button type='submit' fullWidth variant='contained' color='primary' sx={classes.submit}>
-						Sign Up
+					<Button type='submit' fullWidth disabled={formik.isSubmitting} sx={classes.submit} variant='contained'>
+						Sign up
 					</Button>
 					<Grid>
 						<Grid item>
@@ -142,55 +227,5 @@ export default function SignUpForm() {
 				</form>
 			</div>
 		</Container>
-		// <form onSubmit={formik.handleSubmit}>
-		// 	<TextField
-		// 		autoFocus
-		// 		error={!!formik.errors.usernameOrEmail}
-		// 		helperText={formik.errors.usernameOrEmail}
-		// 		variant='outlined'
-		// 		margin='dense'
-		// 		label='Username or Email*'
-		// 		type='text'
-		// 		fullWidth
-		// 		name='usernameOrEmail'
-		// 		placeholder='Username or Email*'
-		// 		onChange={formik.handleChange}
-		// 		value={formik.values.usernameOrEmail}
-		// 	/>
-		// 	<TextField
-		// 		error={!!formik.errors.password}
-		// 		helperText={formik.errors.password}
-		// 		variant='outlined'
-		// 		margin='dense'
-		// 		label='Password*'
-		// 		type={showPassword ? "text" : "password"}
-		// 		fullWidth
-		// 		name='password'
-		// 		placeholder='Password*'
-		// 		onChange={formik.handleChange}
-		// 		value={formik.values.password}
-		// 		InputProps={{
-		// 			endAdornment: (
-		// 				<InputAdornment position='end'>
-		// 					<IconButton
-		// 						aria-label='toggle password visibility'
-		// 						onClick={handleClickShowPassword}
-		// 						onMouseDown={handleMouseDownPassword}
-		// 						edge='end'>
-		// 						{showPassword ? <Visibility /> : <VisibilityOff />}
-		// 					</IconButton>
-		// 				</InputAdornment>
-		// 			),
-		// 		}}
-		// 	/>
-		// 	<Button
-		// 		type='submit'
-		// 		disabled={formik.isSubmitting}
-		// 		className={classes.login}
-		// 		color='secondary'
-		// 		variant='outlined'>
-		// 		Login
-		// 	</Button>
-		// </form>
 	);
 }
