@@ -20,7 +20,7 @@ theme = createTheme(theme, {
 		MuiTextField: {
 			styleOverrides: {
 				root: {
-					fontSize: "1rem",
+					borderWidth: "4px",
 				},
 			},
 		},

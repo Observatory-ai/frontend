@@ -9,20 +9,25 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import theme from "./theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
 	<React.StrictMode>
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<BrowserRouter>
-				<Routes>
-					<Route path='/dashboard' element={<App />} />
-					<Route path='/signup' element={<Signup />} />
+		<QueryClientProvider client={queryClient}>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				<BrowserRouter>
+					<Routes>
+						<Route path='/dashboard' element={<App />} />
+						<Route path='/signup' element={<Signup />} />
 
-					<Route path='/' element={<Login />} />
-				</Routes>
-			</BrowserRouter>
-		</ThemeProvider>
+						<Route path='/' element={<Login />} />
+					</Routes>
+				</BrowserRouter>
+			</ThemeProvider>
+		</QueryClientProvider>
 	</React.StrictMode>,
 	document.getElementById("root")
 );
