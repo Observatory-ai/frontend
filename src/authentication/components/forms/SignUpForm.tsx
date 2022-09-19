@@ -35,6 +35,21 @@ const SignUpForm = () => {
   const { isSubmitting, errors } = formState;
   const onSubmit = (data: SignUpFormValues) => {
     console.log(data);
+    fetch('http://127.0.0.1:5000/register', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        password: data.password,
+      })
+    }).then (function (response) {
+      console.log(response);
+    });
     navigate('/dashboard');
   };
 
