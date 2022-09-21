@@ -1,0 +1,8 @@
+package.json
+*.html
+/.vscode
+scripts/*
+config/*
+/scripts
+/public
+/config

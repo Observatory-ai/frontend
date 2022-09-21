@@ -1,0 +1,99 @@
+{
+  "name": "observatory-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.6.8",
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
+    "@hookform/resolvers": "^2.9.7",
+    "@iconify/react": "^3.2.1",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^5.5.1",
+    "@mui/material": "^5.5.2",
+    "@nivo/bar": "^0.79.1",
+    "@nivo/core": "^0.79.0",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^16.11.26",
+    "@types/react": "^17.0.41",
+    "@types/react-dom": "^17.0.14",
+    "graphql": "^16.5.0",
+    "graphql-ws": "^5.9.1",
+    "i18next": "^21.8.13",
+    "i18next-browser-languagedetector": "^6.1.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-hook-form": "^7.33.1",
+    "react-i18next": "^11.18.0",
+    "react-router-dom": "^6.2.2",
+    "react-scripts": "5.0.0",
+    "typescript": "^4.6.2",
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --coverage",
+    "eject": "react-scripts eject",
+    "eslint": "./node_modules/.bin/eslint src --ext .js,.jsx,.ts,.tsx",
+    "generate": "graphql-codegen --config codegen.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/*.{js,jsx,ts,tsx}",
+      "!**/node_modules/**",
+      "!**/coverage/**",
+      "!**/serviceWorker.js",
+      "!**/index.js",
+      "!**/generated/**",
+      "!**/*.graphql"
+    ],
+    "coverageReporters": [
+      "json",
+      "html",
+      "text",
+      "text-summary",
+      "cobertura"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@apollo/react-testing": "^4.0.0",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/introspection": "^2.1.1",
+    "@graphql-codegen/typescript": "^2.5.1",
+    "@graphql-codegen/typescript-operations": "^2.4.2",
+    "@graphql-codegen/typescript-react-apollo": "^3.2.16",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "eslint": "^8.18.0",
+    "eslint-plugin-jest-dom": "^4.0.2",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-testing-library": "^5.5.1",
+    "jest-junit": "^13.2.0",
+    "prettier": "^2.7.1"
+  }
+}
