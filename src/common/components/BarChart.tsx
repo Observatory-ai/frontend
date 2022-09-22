@@ -4,14 +4,9 @@ export const BarChart = ({ data } : {data: any}) => (
     <ResponsiveBar
         data={data}
         keys={[
-            'hot dog',
-            'burger',
-            'sandwich',
-            'kebab',
-            'fries',
-            'donut'
+            'hours'
         ]}
-        indexBy="country"
+        indexBy="day"
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
@@ -37,20 +32,20 @@ export const BarChart = ({ data } : {data: any}) => (
                 spacing: 10
             }
         ]}
-        fill={[
-            {
-                match: {
-                    id: 'fries'
-                },
-                id: 'dots'
-            },
-            {
-                match: {
-                    id: 'sandwich'
-                },
-                id: 'lines'
-            }
-        ]}
+        // fill={[
+        //     {
+        //         match: {
+        //             id: 'fries'
+        //         },
+        //         id: 'dots'
+        //     },
+        //     {
+        //         match: {
+        //             id: 'sandwich'
+        //         },
+        //         id: 'lines'
+        //     }
+        // ]}
         borderColor={{
             from: 'color',
             modifiers: [
@@ -66,7 +61,7 @@ export const BarChart = ({ data } : {data: any}) => (
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'country',
+            legend: 'day',
             legendPosition: 'middle',
             legendOffset: 32
         }}
@@ -74,7 +69,7 @@ export const BarChart = ({ data } : {data: any}) => (
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'food',
+            legend: 'hours',
             legendPosition: 'middle',
             legendOffset: -40
         }}
@@ -115,6 +110,6 @@ export const BarChart = ({ data } : {data: any}) => (
         ]}
         role="application"
         ariaLabel="Nivo bar chart demo"
-        barAriaLabel={function(e){return e.id+": "+e.formattedValue+" in country: "+e.indexValue}}
+        barAriaLabel={function(e){return e.id+": "+e.formattedValue+" for Day: "+e.indexValue}}
     />
 )

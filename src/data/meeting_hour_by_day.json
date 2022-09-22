@@ -1,0 +1,30 @@
+[
+   {
+      "day":"Monday",
+      "hours": 5.5
+   },
+   {
+      "day":"Tuesday",
+      "hours": 2.0
+   },
+   {
+      "day":"Wednesday",
+      "hours": 6.5
+   },
+   {
+      "day":"Thursday",
+      "hours": 5.0
+   },
+   {
+      "day":"Friday",
+      "hours": 3.0
+   },
+   {
+      "day":"Saturday",
+      "hours": 0
+   },
+   {
+      "day":"Sunday",
+      "hours": 0
+   }
+]
