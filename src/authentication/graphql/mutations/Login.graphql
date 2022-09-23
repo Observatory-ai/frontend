@@ -1,0 +1,8 @@
+mutation Login($body: ID!) {
+  login(body: $body) @rest(type: "User", endpoint: "auth", path: "/login", method: "POST") {
+    uuid
+    email
+    username
+    accessToken
+  }
+}

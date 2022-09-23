@@ -1,14 +1,13 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
-import { loginSchema } from '../../schemas/formSchemas';
+import { AuthContext, AuthReducerAction } from '../../contexts/AuthContext';
 import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
 
@@ -16,6 +15,7 @@ export default function LoginForm() {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -29,13 +29,15 @@ export default function LoginForm() {
 
   const { register, handleSubmit, formState } = useForm<LoginFormValues>({
     defaultValues: { usernameOrEmail: '', password: '' },
-    resolver: yupResolver(loginSchema),
+    // resolver: yupResolver(loginSchema),
   });
 
   const { isSubmitting, errors } = formState;
   const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
-    navigate('/dashboard');
+    console.log('login data: ', data);
+
+    dispatch({ type: AuthReducerAction.setAccessToken, payload: { accessToken: 'test' } });
+    // navigate('/dashboard');
   };
 
   return (
