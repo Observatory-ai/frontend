@@ -18,16 +18,19 @@ export const AuthContext = createContext<{
 }>({ ...initialState, dispatch: () => null });
 
 export enum AuthReducerAction {
-  setUser,
-  setAccessToken,
+  loginOrRegister,
+  refreshToken,
+  logout,
 }
 
 const AuthReducer = (state: AuthContextValues, action: { type: AuthReducerAction; payload: AuthContextValues }) => {
   switch (action.type) {
-    case AuthReducerAction.setUser:
-      return { ...state, user: action.payload.user };
-    case AuthReducerAction.setAccessToken:
+    case AuthReducerAction.loginOrRegister:
+      return { accessToken: action.payload.accessToken, user: action.payload.user };
+    case AuthReducerAction.refreshToken:
       return { ...state, accessToken: action.payload.accessToken };
+    case AuthReducerAction.logout:
+      return { ...initialState };
     default:
       return state;
   }

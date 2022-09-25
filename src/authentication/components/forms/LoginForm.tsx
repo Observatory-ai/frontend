@@ -1,13 +1,16 @@
+import { useMutation } from '@apollo/client';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
-import { AuthContext, AuthReducerAction } from '../../contexts/AuthContext';
+import LOGIN from '../../graphql/mutations/Login';
+import { loginSchema } from '../../schemas/formSchemas';
 import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
 
@@ -15,7 +18,7 @@ export default function LoginForm() {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
-  const { dispatch } = useContext(AuthContext);
+  const [login] = useMutation(LOGIN);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -29,15 +32,14 @@ export default function LoginForm() {
 
   const { register, handleSubmit, formState } = useForm<LoginFormValues>({
     defaultValues: { usernameOrEmail: '', password: '' },
-    // resolver: yupResolver(loginSchema),
+    resolver: yupResolver(loginSchema),
   });
 
   const { isSubmitting, errors } = formState;
-  const onSubmit = (data: LoginFormValues) => {
-    console.log('login data: ', data);
-
-    dispatch({ type: AuthReducerAction.setAccessToken, payload: { accessToken: 'test' } });
-    // navigate('/dashboard');
+  const onSubmit = async (data: LoginFormValues) => {
+    const { usernameOrEmail, password } = data;
+    await login({ variables: { input: { emailOrUsername: usernameOrEmail, password } } });
+    navigate('/dashboard');
   };
 
   return (

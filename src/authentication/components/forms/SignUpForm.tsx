@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -8,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
+import REGISTER from '../../graphql/mutations/Register';
 import { signUpSchema } from '../../schemas/formSchemas';
 import { SignUpFormValues } from '../../types/formValues';
 import classes from './SignUpForm.styles';
@@ -16,6 +18,7 @@ const SignUpForm = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation('common');
+  const [registerMutation] = useMutation(REGISTER);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,8 +36,9 @@ const SignUpForm = () => {
   });
 
   const { isSubmitting, errors } = formState;
-  const onSubmit = (data: SignUpFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: SignUpFormValues) => {
+    const { firstName, lastName, email, username, password, confirmPassword } = data;
+    await registerMutation({ variables: { input: { email, firstName, lastName, username, password, confirmPassword } } });
     navigate('/dashboard');
   };
 
