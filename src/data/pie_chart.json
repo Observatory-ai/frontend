@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "id": "hack",
+      "label": "hack",
+      "value": 174,
+      "color": "hsl(171, 70%, 50%)"
+    },
+    {
+      "id": "css",
+      "label": "css",
+      "value": 495,
+      "color": "hsl(301, 70%, 50%)"
+    },
+    {
+      "id": "javascript",
+      "label": "javascript",
+      "value": 370,
+      "color": "hsl(13, 70%, 50%)"
+    },
+    {
+      "id": "stylus",
+      "label": "stylus",
+      "value": 253,
+      "color": "hsl(297, 70%, 50%)"
+    },
+    {
+      "id": "c",
+      "label": "c",
+      "value": 278,
+      "color": "hsl(19, 70%, 50%)"
+    }
+  ]
+}
