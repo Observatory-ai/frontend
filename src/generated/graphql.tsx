@@ -13,7 +13,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Void: any;
   _service_apis_enum: any;
   audit_log_action_enum: any;
   audit_log_resource_enum: any;
@@ -59,6 +58,14 @@ export type LoginInput = {
 
 export type LoginOutput = {
   __typename?: 'LoginOutput';
+  accessToken: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  uuid: Scalars['String'];
+};
+
+export type RefreshTokensOutput = {
+  __typename?: 'RefreshTokensOutput';
   accessToken: Scalars['String'];
   email: Scalars['String'];
   username: Scalars['String'];
@@ -947,9 +954,9 @@ export type Mutation_Root = {
   /** login */
   login?: Maybe<LoginOutput>;
   /** logout */
-  logout: Scalars['Void'];
+  logout: Scalars['Boolean'];
   /** refresh auth tokens */
-  refreshTokens: Scalars['Void'];
+  refreshTokens?: Maybe<RefreshTokensOutput>;
   /** register */
   register?: Maybe<RegisterOutput>;
   /** update data of the table: "audit_log" */
@@ -3127,12 +3134,12 @@ export type LoginMutation = { __typename?: 'mutation_root', login?: { __typename
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutMutation = { __typename?: 'mutation_root', logout: any };
+export type LogoutMutation = { __typename?: 'mutation_root', logout: boolean };
 
 export type RefreshTokensMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RefreshTokensMutation = { __typename?: 'mutation_root', refreshTokens: any };
+export type RefreshTokensMutation = { __typename?: 'mutation_root', refreshTokens?: { __typename?: 'RefreshTokensOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
 export type RegisterMutationVariables = Exact<{
   registerInput: RegisterInput;
@@ -3210,7 +3217,12 @@ export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RefreshTokensDocument = gql`
     mutation RefreshTokens {
-  refreshTokens
+  refreshTokens {
+    accessToken
+    email
+    username
+    uuid
+  }
 }
     `;
 export type RefreshTokensMutationFn = Apollo.MutationFunction<RefreshTokensMutation, RefreshTokensMutationVariables>;

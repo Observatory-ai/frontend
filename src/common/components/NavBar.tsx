@@ -102,7 +102,13 @@ const NavBar = () => {
       onClose={handleMenuClose}>
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-      <MenuItem component={Link} to="/" onClick={async () => await logout()}>
+      <MenuItem
+        component={Link}
+        to="/"
+        onClick={
+          async () =>
+            await logout() /* if logout fails, need to call refreshTokens. If refreshTokens passes, logout the user, if it doesnt clear user and accessToken and refirect to login*/
+        }>
         Sign Out
       </MenuItem>
     </Menu>
