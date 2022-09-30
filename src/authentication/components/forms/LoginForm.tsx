@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -9,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
-import LOGIN from '../../graphql/mutations/Login';
+import { useLoginMutation } from '../../../generated/graphql';
 import { loginSchema } from '../../schemas/formSchemas';
 import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
@@ -18,7 +17,7 @@ export default function LoginForm() {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
-  const [login] = useMutation(LOGIN);
+  const [login, { data, loading, error }] = useLoginMutation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -36,10 +35,14 @@ export default function LoginForm() {
   });
 
   const { isSubmitting, errors } = formState;
-  const onSubmit = async (data: LoginFormValues) => {
-    const { usernameOrEmail, password } = data;
-    await login({ variables: { input: { emailOrUsername: usernameOrEmail, password } } });
-    navigate('/dashboard');
+  const onSubmit = async (formValues: LoginFormValues) => {
+    const { usernameOrEmail, password } = formValues;
+    try {
+      await login({ variables: { loginInput: { emailOrUsername: usernameOrEmail, password } } });
+      navigate('/dashboard');
+    } catch (e: any) {
+      console.log(e);
+    }
   };
 
   return (

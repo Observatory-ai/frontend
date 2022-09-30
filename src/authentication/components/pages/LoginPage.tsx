@@ -1,27 +1,41 @@
-import { Container } from '@mui/material';
-import { useContext } from 'react';
+import { Box, CircularProgress, Container } from '@mui/material';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRefreshTokensMutation } from '../../../generated/graphql';
 import { AuthContext, AuthReducerAction } from '../../contexts/AuthContext';
 import LoginForm from '../forms/LoginForm';
 
 function LoginPage() {
   const { user, accessToken, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [refreshTokens, { loading }] = useRefreshTokensMutation();
 
-  if (!user || !accessToken) {
-    // call refreshToken endpoint if the user is already authenticated
-
-    // if the refreshToken endpoint returns an error
-    dispatch({ type: AuthReducerAction.logout, payload: { user: null, accessToken: null } });
-
-    // if the refreshToken endpoint returns a new access and refresh token
-    navigate('/dashboard');
-  }
+  useEffect(() => {
+    const fetchRefreshTokens = async () => {
+      try {
+        await refreshTokens();
+        navigate('/dashboard');
+      } catch (e) {
+        dispatch({ type: AuthReducerAction.logout, payload: { user: null, accessToken: null } });
+      }
+    };
+    if (!user || !accessToken) {
+      fetchRefreshTokens();
+    }
+  }, []);
 
   return (
-    <Container>
-      <LoginForm />
-    </Container>
+    <>
+      {!loading ? (
+        <Container>
+          <LoginForm />
+        </Container>
+      ) : (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      )}
+    </>
   );
 }
 

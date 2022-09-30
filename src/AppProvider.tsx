@@ -1,68 +1,78 @@
-import { ApolloClient, ApolloLink, ApolloProvider, InMemoryCache } from '@apollo/client';
-import { RestLink } from 'apollo-link-rest';
-import { useContext, useState } from 'react';
+import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
+import { useContext } from 'react';
 import { AuthContext, AuthReducerAction } from './authentication/contexts/AuthContext';
 
 type AppProviderProps = {
   children: React.ReactNode;
 };
-
-type RestResponse = {
-  body: ReadableStream;
-  bodyUsed: boolean;
-  headers: Headers;
-  ok: boolean;
-  redirected: boolean;
-  status: number;
-  statusText: string;
-  type: string;
-  url: string;
-};
-
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch, accessToken } = useContext(AuthContext);
+  console.log('reredner');
+  // const errorLink = onError(({ graphQLErrors, networkError }) => {
+  //   if (graphQLErrors)
+  //     graphQLErrors.map(({ message, extensions }) => {
+  //       console.log(`[GraphQL error]: Message: ${message}, Location: ${extensions.code}`);
+  //     });
+  //   if (networkError) {
+  //     console.log(`[Network error]: ${networkError}`);
+  //   }
+  // });
 
-  const authRestLink = new ApolloLink((operation, forward) => {
+  const authLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers }: { headers: Headers }) => {
+      console.log(accessToken);
       return {
         headers: {
           ...headers,
           authorization: accessToken ? `Bearer ${accessToken}` : '',
+          'x-hasura-admin-secret': 'admin', // switch to .env variable
         },
       };
     });
     return forward(operation).map((result: any) => {
-      const { restResponses } = operation.getContext();
-      const isLogin: RestResponse = restResponses.find((response: RestResponse) => response.url.includes('api/auth/login'));
-      const isRegister: RestResponse = restResponses.find((response: RestResponse) => response.url.includes('api/auth/register'));
+      console.log(result);
+      const login = result.data?.login;
+      const register = result.data?.register;
+      const refreshTokens = result.data?.refreshTokens;
+      const logout = result.data?.logout;
 
-      if (isLogin) {
-        const { accessToken, email, username, uuid } = result.data.login;
-        dispatch({ type: AuthReducerAction.loginOrRegister, payload: { accessToken, user: { email, username, uuid } } });
+      if (login) {
+        const { accessToken, email, username, uuid } = login;
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
       }
-      if (isRegister) {
-        const { accessToken, email, username, uuid } = result.data.register;
-        dispatch({ type: AuthReducerAction.loginOrRegister, payload: { accessToken, user: { email, username, uuid } } });
+
+      if (register) {
+        const { accessToken, email, username, uuid } = register;
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
       }
+
+      if (refreshTokens) {
+        const { accessToken, email, username, uuid } = refreshTokens;
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
+      }
+
+      if (logout) {
+        dispatch({ type: AuthReducerAction.logout, payload: { accessToken: null, user: null } });
+      }
+
       return result;
     });
   });
 
-  const restLink = new RestLink({
+  const hasuraLink = new HttpLink({
     credentials: 'include', // same-origin (same domains)
-    uri: 'http://localhost:3000/api/auth', // switch to env variable
+    uri: 'http://localhost:8080/v1/graphql', // switch to env variable
   });
-  // need to add Hasura endpoint for graphql
 
   const createApolloClient = () => {
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: ApolloLink.from([authRestLink, restLink]), // restLink needs to be the last link in the chain
+      link: ApolloLink.from([authLink, hasuraLink]), // restLink needs to be the last link in the chain
       connectToDevTools: true,
     });
   };
 
-  const [client] = useState(createApolloClient());
+  // const [client] = useState(createApolloClient());
 
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  return <ApolloProvider client={createApolloClient()}>{children}</ApolloProvider>;
 };
