@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
+import { useLoginMutation } from '../../../generated/graphql';
 import { loginSchema } from '../../schemas/formSchemas';
 import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
@@ -16,6 +17,7 @@ export default function LoginForm() {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
+  const [login, { data, loading, error }] = useLoginMutation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,9 +35,14 @@ export default function LoginForm() {
   });
 
   const { isSubmitting, errors } = formState;
-  const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
-    navigate('/dashboard');
+  const onSubmit = async (formValues: LoginFormValues) => {
+    const { usernameOrEmail, password } = formValues;
+    try {
+      await login({ variables: { loginInput: { emailOrUsername: usernameOrEmail, password } } });
+      navigate('/dashboard');
+    } catch (e: any) {
+      console.log(e);
+    }
   };
 
   return (

@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
+import { useRegisterMutation } from '../../../generated/graphql';
 import { signUpSchema } from '../../schemas/formSchemas';
 import { SignUpFormValues } from '../../types/formValues';
 import classes from './SignUpForm.styles';
@@ -16,6 +17,7 @@ const SignUpForm = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation('common');
+  const [registerMutation, { data, loading, error }] = useRegisterMutation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,8 +35,10 @@ const SignUpForm = () => {
   });
 
   const { isSubmitting, errors } = formState;
-  const onSubmit = (data: SignUpFormValues) => {
-    console.log(data);
+
+  const onSubmit = async (formValues: SignUpFormValues) => {
+    const { firstName, lastName, email, username, password, confirmPassword } = formValues;
+    await registerMutation({ variables: { registerInput: { email, firstName, lastName, username, password, confirmPassword } } });
     navigate('/dashboard');
   };
 
