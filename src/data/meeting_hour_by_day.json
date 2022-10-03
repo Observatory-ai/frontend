@@ -1,33 +1,33 @@
 {
-  "x_axis": "day",
+  "x_axis": "date",
   "y_axis": "hours",
   "data": [
     {
-      "day": "Monday",
+      "date": "Monday",
       "hours": 5.5
     },
     {
-      "day": "Tuesday",
+      "date": "Tuesday",
       "hours": 2.0
     },
     {
-      "day": "Wednesday",
+      "date": "Wednesday",
       "hours": 6.5
     },
     {
-      "day": "Thursday",
+      "date": "Thursday",
       "hours": 5.0
     },
     {
-      "day": "Friday",
+      "date": "Friday",
       "hours": 3.0
     },
     {
-      "day": "Saturday",
+      "date": "Saturday",
       "hours": 0
     },
     {
-      "day": "Sunday",
+      "date": "Sunday",
       "hours": 0
     }
   ]

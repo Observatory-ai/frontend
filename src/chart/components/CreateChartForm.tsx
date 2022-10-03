@@ -7,7 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import { chartFormSchema } from '../schemas/chartFormSchema';
 import { ChartFormValues } from '../types/chartFormValues';
 
-export default function CreateChartForm() {
+import { useState } from 'react';
+import * as charts from '../../common/components/Chart';
+import line_data from '../../data/line_chart.json';
+import { barToLine } from '../conversion/chartFunctions';
+
+type ChartProps = {
+  chart_data: any;
+};
+
+export default function CreateChartForm({ chart_data }: ChartProps) {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -17,11 +26,14 @@ export default function CreateChartForm() {
     resolver: yupResolver(chartFormSchema),
   });
 
+  const [chartType, setChartType] = useState('bar');
+  const [newData, setNewData] = useState(line_data);
+
   const { isSubmitting, errors } = formState;
   const onSubmit = (data: ChartFormValues) => {
     console.log(data);
-
-    // navigate('/dashboard');
+    setNewData(barToLine(data, chart_data));
+    setChartType(data.chartType);
   };
 
   return (
@@ -68,6 +80,9 @@ export default function CreateChartForm() {
           {t('button.submit', { ns: 'common' })}
         </Button>
       </form>
+      <div style={{ height: '500px', width: '500px' }}>
+        {chartType === 'line' ? <charts.LineChart data={newData} /> : <charts.BarChart data={chart_data} />}
+      </div>
     </Container>
   );
 }
