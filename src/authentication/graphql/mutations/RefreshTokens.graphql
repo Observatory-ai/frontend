@@ -1,3 +1,8 @@
 mutation RefreshTokens {
-  refreshTokens
+  refreshTokens {
+    accessToken
+    email
+    username
+    uuid
+  }
 }
