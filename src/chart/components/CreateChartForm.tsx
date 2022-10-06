@@ -9,8 +9,7 @@ import { ChartFormValues } from '../types/chartFormValues';
 
 import { useState } from 'react';
 import * as charts from '../../common/components/Chart';
-import line_data from '../../data/line_chart.json';
-import { barToLine } from '../conversion/chartFunctions';
+import { chartToBuild } from '../conversion/chartFunctions';
 
 type ChartProps = {
   chart_data: any;
@@ -26,14 +25,14 @@ export default function CreateChartForm({ chart_data }: ChartProps) {
     resolver: yupResolver(chartFormSchema),
   });
 
-  const [chartType, setChartType] = useState('bar');
-  const [newData, setNewData] = useState(line_data);
+  const [newData, setNewData] = useState(chart_data);
 
   const { isSubmitting, errors } = formState;
   const onSubmit = (data: ChartFormValues) => {
     console.log(data);
-    setNewData(barToLine(data, chart_data));
-    setChartType(data.chartType);
+    const new_data = chartToBuild(data, newData)!;
+    console.log(new_data);
+    setNewData(new_data);
   };
 
   return (
@@ -81,7 +80,7 @@ export default function CreateChartForm({ chart_data }: ChartProps) {
         </Button>
       </form>
       <div style={{ height: '500px', width: '500px' }}>
-        {chartType === 'line' ? <charts.LineChart data={newData} /> : <charts.BarChart data={chart_data} />}
+        {newData.chartType === 'line' ? <charts.LineChart data={newData} /> : <charts.BarChart data={newData} />}
       </div>
     </Container>
   );

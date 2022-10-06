@@ -1,4 +1,5 @@
 {
+  "chartType": "bar",
   "x_axis": "date",
   "y_axis": "hours",
   "data": [
