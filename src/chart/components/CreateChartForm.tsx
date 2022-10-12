@@ -8,7 +8,7 @@ import { chartFormSchema } from '../schemas/chartFormSchema';
 import { ChartFormValues } from '../types/chartFormValues';
 
 import { useState } from 'react';
-import * as charts from '../../common/components/Chart';
+import { returnChart } from '../../common/components/Chart';
 import { chartToBuild } from '../conversion/chartFunctions';
 
 type ChartProps = {
@@ -79,9 +79,7 @@ export default function CreateChartForm({ chart_data }: ChartProps) {
           {t('button.submit', { ns: 'common' })}
         </Button>
       </form>
-      <div style={{ height: '500px', width: '500px' }}>
-        {newData.chartType === 'line' ? <charts.LineChart data={newData} /> : <charts.BarChart data={newData} />}
-      </div>
+      <div style={{ height: '500px', width: '500px' }}>{returnChart(newData.chartType, newData)}</div>
     </Container>
   );
 }

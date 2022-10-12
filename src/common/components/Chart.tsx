@@ -8,6 +8,23 @@ type ChartProps = {
   data: any;
 };
 
+export function returnChart(chartType: string, data: ChartProps) {
+  switch (chartType) {
+    case 'Bar':
+      return <BarChart data={data} />;
+    case 'Calendar':
+      return <CalendarChart data={data} />;
+    case 'Line':
+      return <LineChart data={data} />;
+    case 'Pie':
+      return <PieChart data={data} />;
+    case 'Scatter':
+      return <ScatterPlotChart data={data} />;
+    default:
+      return <BarChart data={data} />;
+  }
+}
+
 export const BarChart = ({ data }: ChartProps) => (
   <ResponsiveBar
     data={data.data}

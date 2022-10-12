@@ -27,23 +27,36 @@ interface IBarChartDataSeriesValues {
   y: number;
 }
 
+interface IPieChartData {
+  chartType: string;
+  data: IPieChartDataCategory[];
+}
+
+interface IPieChartDataCategory {
+  id: string;
+  label: string;
+  value: number;
+}
+
 export function chartToBuild(chartToCreateData: any, oldChart: any) {
-  console.log('inside chartToBuild');
   console.log(chartToCreateData);
   console.log(oldChart);
-  if (oldChart.chartType == 'bar' && chartToCreateData.chartType == 'line') {
-    console.log('going to barToLine');
+  if (oldChart.chartType == 'Bar' && chartToCreateData.chartType == 'Line') {
     return barToLine(oldChart);
-  } else if (oldChart.chartType == 'line' && chartToCreateData.chartType == 'bar') {
-    console.log('going to lineToBar');
+  } else if (oldChart.chartType == 'Line' && chartToCreateData.chartType == 'Bar') {
     return lineToBar(oldChart);
+  } else if (oldChart.chartType == 'Bar' && chartToCreateData.chartType == 'Pie') {
+    console.log('entered bar to pie');
+    return barToPie(oldChart);
+  } else if (oldChart.chartType == 'Pie' && chartToCreateData.chartType == 'Bar') {
+    return pieToBar(oldChart);
   }
 }
 
 // TODO: add option to create multiple Series
 export function lineToBar(chart_data: any) {
   const bar_data = {} as IBarChartData;
-  bar_data.chartType = 'bar';
+  bar_data.chartType = 'Bar';
   bar_data.x_axis = chart_data.x_axis;
   bar_data.y_axis = chart_data.y_axis;
   bar_data.data = [] as IBarChartDataSeriesValues[];
@@ -67,9 +80,8 @@ export function lineToBar(chart_data: any) {
 
 // TODO: add option to create multiple Series
 export function barToLine(chart_data: any) {
-  console.log('inside barToLine');
   const line_data = {} as ILineChartData;
-  line_data['chartType'] = 'line';
+  line_data['chartType'] = 'Line';
   line_data['x_axis'] = chart_data.x_axis;
   line_data['y_axis'] = chart_data.y_axis;
   line_data['data'] = [] as ILineChartDataSeriesObject[];
@@ -79,4 +91,32 @@ export function barToLine(chart_data: any) {
     line_data['data'][0]['data'].push({ x: chart_value[keys[0]], y: chart_value[keys[1]] });
   });
   return line_data;
+}
+
+export function barToPie(chart_data: any) {
+  const pie_data = {} as IPieChartData;
+  pie_data.chartType = 'Pie';
+  pie_data.data = [] as IPieChartDataCategory[];
+  chart_data.data.forEach((chart_value: any) => {
+    const keys = Object.keys(chart_value);
+    pie_data.data.push({ id: chart_value[keys[0]], label: chart_value[keys[0]], value: chart_value[keys[1]] });
+  });
+  return pie_data;
+}
+
+export function pieToBar(chart_data: any) {
+  const bar_data = {} as IBarChartData;
+  bar_data.chartType = 'Bar';
+  bar_data.x_axis = chart_data.category[0].id;
+  bar_data.y_axis = 'Value';
+  bar_data.data = [] as IBarChartDataSeriesValues[];
+  chart_data.data.forEach((chart_value: any) => {
+    bar_data.data.push({ x: chart_value.id, y: chart_value.value });
+  });
+  const jsonBarString = JSON.stringify(bar_data)
+    .replaceAll('"x":', '"' + bar_data.x_axis + '":')
+    .replaceAll('"y":', '"' + bar_data.y_axis + '":');
+  const jsonBarObject = JSON.parse(jsonBarString);
+  console.log(jsonBarObject);
+  return jsonBarObject;
 }
