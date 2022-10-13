@@ -4,11 +4,12 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
+import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
-import { useLoginMutation } from '../../../generated/graphql';
+import { useGoogleAuthMutation, useLoginMutation } from '../../../generated/graphql';
 import { loginSchema } from '../../schemas/formSchemas';
 import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
@@ -18,6 +19,7 @@ export default function LoginForm() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [login, { data, loading, error }] = useLoginMutation();
+  const [googleAuth, { data: googleData, loading: googleLoading, error: googleError }] = useGoogleAuthMutation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,6 +47,17 @@ export default function LoginForm() {
     }
   };
 
+  const onGoogleAuthSuccess = async (response: GoogleLoginResponse) => {
+    try {
+      await googleAuth({ variables: { googleAuthInput: { accessToken: response.accessToken } } });
+      navigate('/dashboard');
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
+
+  const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID as string;
+
   return (
     <Container maxWidth="xs">
       <div style={classes.formHeader}>
@@ -56,9 +69,20 @@ export default function LoginForm() {
         </Typography>
       </div>
       <Stack sx={{ marginTop: theme.spacing(4), width: '100%' }} direction="row" spacing={2}>
-        <Button fullWidth size="large" color="inherit" variant="outlined">
-          <Iconify icon="eva:google-fill" color="#DF3E30" height={24} />
-        </Button>
+        <GoogleLogin
+          clientId={clientId}
+          buttonText="Log in"
+          cookiePolicy={'single_host_origin'}
+          // responseType="code"
+          // accessType="offline"
+          onFailure={(e) => console.log('error', e)}
+          onSuccess={(response: GoogleLoginResponse | GoogleLoginResponseOffline) => onGoogleAuthSuccess(response as GoogleLoginResponse)} // onGoogleAuthSuccess(response)
+          render={(renderProps) => (
+            <Button onClick={renderProps.onClick} disabled={renderProps.disabled} fullWidth size="large" color="inherit" variant="outlined">
+              <Iconify icon="eva:google-fill" color="#DF3E30" height={24} />
+            </Button>
+          )}
+        />
         <Button fullWidth size="large" color="inherit" variant="outlined">
           <Iconify icon="eva:facebook-fill" color="#1877F2" height={24} />
         </Button>

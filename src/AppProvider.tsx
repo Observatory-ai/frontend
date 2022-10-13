@@ -7,7 +7,6 @@ type AppProviderProps = {
 };
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch, accessToken } = useContext(AuthContext);
-  console.log('reredner');
   // const errorLink = onError(({ graphQLErrors, networkError }) => {
   //   if (graphQLErrors)
   //     graphQLErrors.map(({ message, extensions }) => {
@@ -20,7 +19,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const authLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers }: { headers: Headers }) => {
-      console.log(accessToken);
       return {
         headers: {
           ...headers,
@@ -30,7 +28,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       };
     });
     return forward(operation).map((result: any) => {
-      console.log(result);
       const login = result.data?.login;
       const register = result.data?.register;
       const refreshTokens = result.data?.refreshTokens;
@@ -71,8 +68,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       connectToDevTools: true,
     });
   };
-
-  // const [client] = useState(createApolloClient());
 
   return <ApolloProvider client={createApolloClient()}>{children}</ApolloProvider>;
 };

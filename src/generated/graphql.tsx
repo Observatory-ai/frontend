@@ -38,6 +38,18 @@ export type Boolean_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Boolean']>>;
 };
 
+export type GoogleAuthInput = {
+  accessToken?: InputMaybe<Scalars['String']>;
+};
+
+export type GoogleAuthOutput = {
+  __typename?: 'GoogleAuthOutput';
+  accessToken: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  uuid: Scalars['String'];
+};
+
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
 export type Int_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Int']>;
@@ -927,6 +939,8 @@ export type Mutation_Root = {
   delete_user?: Maybe<User_Mutation_Response>;
   /** delete single row from the table: "user" */
   delete_user_by_pk?: Maybe<User>;
+  /** google auth */
+  googleAuth?: Maybe<GoogleAuthOutput>;
   /** insert data into the table: "audit_log" */
   insert_audit_log?: Maybe<Audit_Log_Mutation_Response>;
   /** insert a single row into the table: "audit_log" */
@@ -1059,6 +1073,12 @@ export type Mutation_RootDelete_UserArgs = {
 /** mutation root */
 export type Mutation_RootDelete_User_By_PkArgs = {
   id: Scalars['Int'];
+};
+
+
+/** mutation root */
+export type Mutation_RootGoogleAuthArgs = {
+  googleAuthInput: GoogleAuthInput;
 };
 
 
@@ -3124,6 +3144,13 @@ export type Uuid_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['uuid']>>;
 };
 
+export type GoogleAuthMutationVariables = Exact<{
+  googleAuthInput: GoogleAuthInput;
+}>;
+
+
+export type GoogleAuthMutation = { __typename?: 'mutation_root', googleAuth?: { __typename?: 'GoogleAuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
@@ -3149,6 +3176,42 @@ export type RegisterMutationVariables = Exact<{
 export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'RegisterOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
 
+export const GoogleAuthDocument = gql`
+    mutation GoogleAuth($googleAuthInput: GoogleAuthInput!) {
+  googleAuth(googleAuthInput: $googleAuthInput) {
+    accessToken
+    email
+    username
+    uuid
+  }
+}
+    `;
+export type GoogleAuthMutationFn = Apollo.MutationFunction<GoogleAuthMutation, GoogleAuthMutationVariables>;
+
+/**
+ * __useGoogleAuthMutation__
+ *
+ * To run a mutation, you first call `useGoogleAuthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGoogleAuthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [googleAuthMutation, { data, loading, error }] = useGoogleAuthMutation({
+ *   variables: {
+ *      googleAuthInput: // value for 'googleAuthInput'
+ *   },
+ * });
+ */
+export function useGoogleAuthMutation(baseOptions?: Apollo.MutationHookOptions<GoogleAuthMutation, GoogleAuthMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GoogleAuthMutation, GoogleAuthMutationVariables>(GoogleAuthDocument, options);
+      }
+export type GoogleAuthMutationHookResult = ReturnType<typeof useGoogleAuthMutation>;
+export type GoogleAuthMutationResult = Apollo.MutationResult<GoogleAuthMutation>;
+export type GoogleAuthMutationOptions = Apollo.BaseMutationOptions<GoogleAuthMutation, GoogleAuthMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($loginInput: LoginInput!) {
   login(loginInput: $loginInput) {
