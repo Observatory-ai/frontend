@@ -27,7 +27,7 @@ function LoginPage() {
   return (
     <>
       {!loading ? (
-        <Container>
+        <Container sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
           <LoginForm />
         </Container>
       ) : (

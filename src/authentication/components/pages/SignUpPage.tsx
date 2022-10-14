@@ -27,7 +27,7 @@ function SignupPage() {
   return (
     <>
       {!loading ? (
-        <Container>
+        <Container sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
           <SignUpForm />
         </Container>
       ) : (
