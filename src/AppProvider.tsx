@@ -31,6 +31,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       const login = result.data?.login;
       const register = result.data?.register;
       const refreshTokens = result.data?.refreshTokens;
+      const googleAuth = result.data?.googleAuth;
       const logout = result.data?.logout;
 
       if (login) {
@@ -45,6 +46,11 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
       if (refreshTokens) {
         const { accessToken, email, username, uuid } = refreshTokens;
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
+      }
+
+      if (googleAuth) {
+        const { accessToken, email, username, uuid } = googleAuth;
         dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
       }
 

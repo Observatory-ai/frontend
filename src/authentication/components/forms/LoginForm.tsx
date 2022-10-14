@@ -73,8 +73,7 @@ export default function LoginForm() {
           clientId={clientId}
           buttonText="Log in"
           cookiePolicy={'single_host_origin'}
-          // responseType="code"
-          // accessType="offline"
+          fetchBasicProfile={false}
           onFailure={(e) => console.log('error', e)}
           onSuccess={(response: GoogleLoginResponse | GoogleLoginResponseOffline) => onGoogleAuthSuccess(response as GoogleLoginResponse)} // onGoogleAuthSuccess(response)
           render={(renderProps) => (

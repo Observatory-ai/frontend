@@ -25,6 +25,14 @@ export type Scalars = {
   uuid: any;
 };
 
+export type AuthOutput = {
+  __typename?: 'AuthOutput';
+  accessToken: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  uuid: Scalars['String'];
+};
+
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
 export type Boolean_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Boolean']>;
@@ -40,14 +48,6 @@ export type Boolean_Comparison_Exp = {
 
 export type GoogleAuthInput = {
   accessToken?: InputMaybe<Scalars['String']>;
-};
-
-export type GoogleAuthOutput = {
-  __typename?: 'GoogleAuthOutput';
-  accessToken: Scalars['String'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  uuid: Scalars['String'];
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -68,22 +68,6 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
-export type LoginOutput = {
-  __typename?: 'LoginOutput';
-  accessToken: Scalars['String'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  uuid: Scalars['String'];
-};
-
-export type RefreshTokensOutput = {
-  __typename?: 'RefreshTokensOutput';
-  accessToken: Scalars['String'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  uuid: Scalars['String'];
-};
-
 export type RegisterInput = {
   confirmPassword: Scalars['String'];
   email: Scalars['String'];
@@ -91,14 +75,6 @@ export type RegisterInput = {
   lastName: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
-};
-
-export type RegisterOutput = {
-  __typename?: 'RegisterOutput';
-  accessToken: Scalars['String'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  uuid: Scalars['String'];
 };
 
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
@@ -940,7 +916,7 @@ export type Mutation_Root = {
   /** delete single row from the table: "user" */
   delete_user_by_pk?: Maybe<User>;
   /** google auth */
-  googleAuth?: Maybe<GoogleAuthOutput>;
+  googleAuth?: Maybe<AuthOutput>;
   /** insert data into the table: "audit_log" */
   insert_audit_log?: Maybe<Audit_Log_Mutation_Response>;
   /** insert a single row into the table: "audit_log" */
@@ -966,13 +942,13 @@ export type Mutation_Root = {
   /** insert a single row into the table: "user" */
   insert_user_one?: Maybe<User>;
   /** login */
-  login?: Maybe<LoginOutput>;
+  login?: Maybe<AuthOutput>;
   /** logout */
   logout: Scalars['Boolean'];
   /** refresh auth tokens */
-  refreshTokens?: Maybe<RefreshTokensOutput>;
+  refreshTokens?: Maybe<AuthOutput>;
   /** register */
-  register?: Maybe<RegisterOutput>;
+  register?: Maybe<AuthOutput>;
   /** update data of the table: "audit_log" */
   update_audit_log?: Maybe<Audit_Log_Mutation_Response>;
   /** update single row of the table: "audit_log" */
@@ -3149,14 +3125,14 @@ export type GoogleAuthMutationVariables = Exact<{
 }>;
 
 
-export type GoogleAuthMutation = { __typename?: 'mutation_root', googleAuth?: { __typename?: 'GoogleAuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type GoogleAuthMutation = { __typename?: 'mutation_root', googleAuth?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
 
 
-export type LoginMutation = { __typename?: 'mutation_root', login?: { __typename?: 'LoginOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type LoginMutation = { __typename?: 'mutation_root', login?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3166,14 +3142,14 @@ export type LogoutMutation = { __typename?: 'mutation_root', logout: boolean };
 export type RefreshTokensMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RefreshTokensMutation = { __typename?: 'mutation_root', refreshTokens?: { __typename?: 'RefreshTokensOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type RefreshTokensMutation = { __typename?: 'mutation_root', refreshTokens?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
 export type RegisterMutationVariables = Exact<{
   registerInput: RegisterInput;
 }>;
 
 
-export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'RegisterOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
 
 export const GoogleAuthDocument = gql`
