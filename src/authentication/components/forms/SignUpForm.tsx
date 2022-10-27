@@ -3,12 +3,13 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link as MuiLink, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
-import { useRegisterMutation } from '../../../generated/graphql';
+import { useGoogleAuthMutation, useRegisterMutation } from '../../../generated/graphql';
 import { signUpSchema } from '../../schemas/formSchemas';
 import { SignUpFormValues } from '../../types/formValues';
 import classes from './SignUpForm.styles';
@@ -18,6 +19,7 @@ const SignUpForm = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const [registerMutation, { data, loading, error }] = useRegisterMutation();
+  const [googleAuth, { data: googleData, loading: googleLoading, error: googleError }] = useGoogleAuthMutation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,6 +44,19 @@ const SignUpForm = () => {
     navigate('/dashboard');
   };
 
+  const onGoogleAuthSuccess = async (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
+    try {
+      await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
+      navigate('/dashboard');
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
+
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: onGoogleAuthSuccess,
+  });
+
   return (
     <Container component="main" maxWidth="xs">
       <div style={classes.formHeader}>
@@ -53,7 +68,7 @@ const SignUpForm = () => {
         </Typography>
       </div>
       <Stack sx={{ marginTop: theme.spacing(4), width: '100%' }} direction="row" spacing={2}>
-        <Button fullWidth size="large" color="inherit" variant="outlined">
+        <Button onClick={() => loginWithGoogle()} id="google-signin-button" fullWidth size="large" color="inherit" variant="outlined">
           <Iconify icon="eva:google-fill" color="#DF3E30" height={24} />
         </Button>
         <Button fullWidth size="large" color="inherit" variant="outlined">

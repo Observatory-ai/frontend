@@ -3,8 +3,8 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
-import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -47,16 +47,18 @@ export default function LoginForm() {
     }
   };
 
-  const onGoogleAuthSuccess = async (response: GoogleLoginResponse) => {
+  const onGoogleAuthSuccess = async (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
     try {
-      await googleAuth({ variables: { googleAuthInput: { accessToken: response.accessToken } } });
+      await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
       navigate('/dashboard');
     } catch (e: any) {
       console.log(e);
     }
   };
 
-  const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID as string;
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: onGoogleAuthSuccess,
+  });
 
   return (
     <Container maxWidth="xs">
@@ -69,19 +71,9 @@ export default function LoginForm() {
         </Typography>
       </div>
       <Stack sx={{ marginTop: theme.spacing(4), width: '100%' }} direction="row" spacing={2}>
-        <GoogleLogin
-          clientId={clientId}
-          buttonText="Log in"
-          cookiePolicy={'single_host_origin'}
-          fetchBasicProfile={false}
-          onFailure={(e) => console.log('error', e)}
-          onSuccess={(response: GoogleLoginResponse | GoogleLoginResponseOffline) => onGoogleAuthSuccess(response as GoogleLoginResponse)} // onGoogleAuthSuccess(response)
-          render={(renderProps) => (
-            <Button onClick={renderProps.onClick} disabled={renderProps.disabled} fullWidth size="large" color="inherit" variant="outlined">
-              <Iconify icon="eva:google-fill" color="#DF3E30" height={24} />
-            </Button>
-          )}
-        />
+        <Button onClick={() => loginWithGoogle()} id="google-signin-button" fullWidth size="large" color="inherit" variant="outlined">
+          <Iconify icon="eva:google-fill" color="#DF3E30" height={24} />
+        </Button>
         <Button fullWidth size="large" color="inherit" variant="outlined">
           <Iconify icon="eva:facebook-fill" color="#1877F2" height={24} />
         </Button>

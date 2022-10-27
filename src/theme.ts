@@ -36,6 +36,24 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem',
+          fontWeight: 'bold',
+          lineHeight: '1rem',
+          paddingTop: '0.5rem',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem',
+          fontWeight: 'bold',
+        },
+      },
+    },
   },
 });
 
