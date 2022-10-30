@@ -13,6 +13,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { googleLogout, TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -20,6 +21,7 @@ import { AuthContext } from '../../authentication/contexts/AuthContext';
 import { useLogoutMutation } from '../../generated/graphql';
 import theme from '../../theme';
 import Iconify from './Iconify';
+
 const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -54,10 +56,21 @@ const NavBar = () => {
     setIsDrawerOpen((prev) => !prev);
   };
 
+  const handleGoogleCalendarActivation = (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
+    console.log(response);
+    // hasGrantedAllScopesGoogle(response, 'https://www.googleapis.com/auth/cloud-platform.read-only')
+  };
+
+  const requestGoogleCalendarAccess = useGoogleLogin({
+    scope: 'https://www.googleapis.com/auth/calendar.events.readonly',
+    prompt: '',
+    hint: user?.email,
+    onSuccess: handleGoogleCalendarActivation,
+  });
+
   const handleGoogleCalendarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      console.log(event.target.checked);
-      // make request with google identity script
+      requestGoogleCalendarAccess();
       // send credentials to backend
     }
   };
@@ -99,6 +112,7 @@ const NavBar = () => {
         to="/"
         onClick={async () => {
           await logout(); /* if logout fails, need to call refreshTokens. If refreshTokens passes, logout the user, if it doesnt clear user and accessToken and refirect to login*/
+          googleLogout();
           navigate('/login');
         }}>
         <IconButton size="small" aria-label="logout" color="inherit">
