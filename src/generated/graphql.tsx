@@ -47,12 +47,43 @@ export type Boolean_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Boolean']>>;
 };
 
+export type Creator = {
+  __typename?: 'Creator';
+  displayName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  self?: Maybe<Scalars['Boolean']>;
+};
+
+export type DefaultReminders = {
+  __typename?: 'DefaultReminders';
+  method?: Maybe<Scalars['String']>;
+  minutes?: Maybe<Scalars['Int']>;
+};
+
+export type End = {
+  __typename?: 'End';
+  dateTime?: Maybe<Scalars['String']>;
+  timeZone?: Maybe<Scalars['String']>;
+};
+
 export type GoogleAuthInput = {
   accessToken?: InputMaybe<Scalars['String']>;
 };
 
 export type GoogleCalendarActivationInput = {
   activationCode?: InputMaybe<Scalars['String']>;
+};
+
+export type GoogleCalendarEventsOutput = {
+  __typename?: 'GoogleCalendarEventsOutput';
+  accessRole?: Maybe<Scalars['String']>;
+  defaultReminders?: Maybe<Array<Maybe<DefaultReminders>>>;
+  etag?: Maybe<Scalars['String']>;
+  items?: Maybe<Array<Maybe<Items>>>;
+  kind?: Maybe<Scalars['String']>;
+  summary?: Maybe<Scalars['String']>;
+  timeZone?: Maybe<Scalars['String']>;
+  updated?: Maybe<Scalars['String']>;
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -68,9 +99,36 @@ export type Int_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Int']>>;
 };
 
+export type Items = {
+  __typename?: 'Items';
+  created?: Maybe<Scalars['String']>;
+  creator?: Maybe<Creator>;
+  end?: Maybe<End>;
+  etag?: Maybe<Scalars['String']>;
+  eventType?: Maybe<Scalars['String']>;
+  htmlLink?: Maybe<Scalars['String']>;
+  iCalUID?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  kind?: Maybe<Scalars['String']>;
+  organizer?: Maybe<Organizer>;
+  reminders?: Maybe<Reminders>;
+  sequence?: Maybe<Scalars['Int']>;
+  start?: Maybe<Start>;
+  status?: Maybe<Scalars['String']>;
+  summary?: Maybe<Scalars['String']>;
+  updated?: Maybe<Scalars['String']>;
+};
+
 export type LoginInput = {
   emailOrUsername: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type Organizer = {
+  __typename?: 'Organizer';
+  displayName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  self?: Maybe<Scalars['Boolean']>;
 };
 
 export type RegisterInput = {
@@ -80,6 +138,17 @@ export type RegisterInput = {
   lastName: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type Reminders = {
+  __typename?: 'Reminders';
+  useDefault?: Maybe<Scalars['Boolean']>;
+};
+
+export type Start = {
+  __typename?: 'Start';
+  dateTime?: Maybe<Scalars['String']>;
+  timeZone?: Maybe<Scalars['String']>;
 };
 
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
@@ -1317,6 +1386,8 @@ export type Query_Root = {
   auth_token_aggregate: Auth_Token_Aggregate;
   /** fetch data from the table: "auth_token" using primary key columns */
   auth_token_by_pk?: Maybe<Auth_Token>;
+  /** google calendar events */
+  googleCalendarEvents?: Maybe<GoogleCalendarEventsOutput>;
   /** fetch data from the table: "service" */
   service: Array<Service>;
   /** fetch aggregated fields from the table: "service" */
@@ -3171,6 +3242,11 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
+export type GoogleCalendarEventsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GoogleCalendarEventsQuery = { __typename?: 'query_root', googleCalendarEvents?: { __typename?: 'GoogleCalendarEventsOutput', items?: Array<{ __typename?: 'Items', creator?: { __typename?: 'Creator', email?: string | null } | null, organizer?: { __typename?: 'Organizer', email?: string | null } | null } | null> | null } | null };
+
 
 export const GoogleAuthDocument = gql`
     mutation GoogleAuth($googleAuthInput: GoogleAuthInput!) {
@@ -3378,3 +3454,44 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const GoogleCalendarEventsDocument = gql`
+    query GoogleCalendarEvents {
+  googleCalendarEvents {
+    items {
+      creator {
+        email
+      }
+      organizer {
+        email
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGoogleCalendarEventsQuery__
+ *
+ * To run a query within a React component, call `useGoogleCalendarEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGoogleCalendarEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGoogleCalendarEventsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGoogleCalendarEventsQuery(baseOptions?: Apollo.QueryHookOptions<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>(GoogleCalendarEventsDocument, options);
+      }
+export function useGoogleCalendarEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>(GoogleCalendarEventsDocument, options);
+        }
+export type GoogleCalendarEventsQueryHookResult = ReturnType<typeof useGoogleCalendarEventsQuery>;
+export type GoogleCalendarEventsLazyQueryHookResult = ReturnType<typeof useGoogleCalendarEventsLazyQuery>;
+export type GoogleCalendarEventsQueryResult = Apollo.QueryResult<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>;
