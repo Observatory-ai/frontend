@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material';
 
-let theme = createTheme({
+const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
@@ -11,30 +11,6 @@ let theme = createTheme({
     },
     background: {
       default: '#f4f5fe',
-    },
-  },
-});
-
-theme = createTheme(theme, {
-  components: {
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          fontSize: '1rem',
-        },
-      },
-    },
-    MuiFormLabel: {
-      styleOverrides: {
-        root: {
-          asterisk: {
-            color: '#db3131',
-            '&$error': {
-              color: '#db3131',
-            },
-          },
-        },
-      },
     },
   },
 });
