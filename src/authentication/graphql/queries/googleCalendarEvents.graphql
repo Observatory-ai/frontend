@@ -1,0 +1,12 @@
+query GoogleCalendarEvents {
+  googleCalendarEvents {
+    items {
+      creator {
+        email
+      }
+      organizer {
+        email
+      }
+    }
+  }
+}

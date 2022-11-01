@@ -3,11 +3,13 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
+import { useGoogleAuthMutation, useLoginMutation } from '../../../generated/graphql';
 import { loginSchema } from '../../schemas/formSchemas';
 import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
@@ -16,6 +18,8 @@ export default function LoginForm() {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
+  const [login, { data, loading, error }] = useLoginMutation();
+  const [googleAuth, { data: googleData, loading: googleLoading, error: googleError }] = useGoogleAuthMutation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,10 +37,28 @@ export default function LoginForm() {
   });
 
   const { isSubmitting, errors } = formState;
-  const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
-    navigate('/dashboard');
+  const onSubmit = async (formValues: LoginFormValues) => {
+    const { usernameOrEmail, password } = formValues;
+    try {
+      await login({ variables: { loginInput: { emailOrUsername: usernameOrEmail, password } } });
+      navigate('/dashboard');
+    } catch (e: any) {
+      console.log(e);
+    }
   };
+
+  const onGoogleAuthSuccess = async (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
+    try {
+      await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
+      navigate('/dashboard');
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
+
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: onGoogleAuthSuccess,
+  });
 
   return (
     <Container maxWidth="xs">
@@ -49,7 +71,7 @@ export default function LoginForm() {
         </Typography>
       </div>
       <Stack sx={{ marginTop: theme.spacing(4), width: '100%' }} direction="row" spacing={2}>
-        <Button fullWidth size="large" color="inherit" variant="outlined">
+        <Button onClick={() => loginWithGoogle()} id="google-signin-button" fullWidth size="large" color="inherit" variant="outlined">
           <Iconify icon="eva:google-fill" color="#DF3E30" height={24} />
         </Button>
         <Button fullWidth size="large" color="inherit" variant="outlined">

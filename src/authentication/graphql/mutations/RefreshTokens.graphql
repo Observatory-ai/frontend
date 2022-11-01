@@ -1,0 +1,8 @@
+mutation RefreshTokens {
+  refreshTokens {
+    accessToken
+    email
+    username
+    uuid
+  }
+}

@@ -1,13 +1,22 @@
-import Layout from '../../common/layout/Layout';
 import * as charts from '../../common/components/Chart';
+import Layout from '../../common/layout/Layout';
 
-import data from '../../data/meeting_hour_by_day.json';
 import contributionsData from '../../data/contributions.json';
 import lineData from '../../data/line_chart.json';
+import data from '../../data/meeting_hour_by_day.json';
 import pieData from '../../data/pie_chart.json';
 import scatterData from '../../data/scatter_plot.json';
+// import data from '../../data/BarChartData.json';
+import { useGoogleCalendarEventsLazyQuery } from '../../generated/graphql';
 
 const DashboardPage = () => {
+  const [getEvents, { loading, error, data: eventsData }] = useGoogleCalendarEventsLazyQuery();
+
+  const handleButtonClick = () => {
+    getEvents();
+    console.log('eventsData', eventsData);
+  };
+
   return (
     <Layout>
       <div style={{ height: '500px' }}>

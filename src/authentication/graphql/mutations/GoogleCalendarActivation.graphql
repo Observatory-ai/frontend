@@ -1,0 +1,3 @@
+mutation googleCalendarActivation($googleCalendarActivationInput: GoogleCalendarActivationInput!) {
+  googleCalendarActivation(googleCalendarActivationInput: $googleCalendarActivationInput)
+}
