@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Void: any;
   _service_apis_enum: any;
   audit_log_action_enum: any;
   audit_log_resource_enum: any;
@@ -48,6 +49,10 @@ export type Boolean_Comparison_Exp = {
 
 export type GoogleAuthInput = {
   accessToken?: InputMaybe<Scalars['String']>;
+};
+
+export type GoogleCalendarActivationInput = {
+  activationCode?: InputMaybe<Scalars['String']>;
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -917,6 +922,8 @@ export type Mutation_Root = {
   delete_user_by_pk?: Maybe<User>;
   /** google auth */
   googleAuth?: Maybe<AuthOutput>;
+  /** google calendar activation */
+  googleCalendarActivation: Scalars['Void'];
   /** insert data into the table: "audit_log" */
   insert_audit_log?: Maybe<Audit_Log_Mutation_Response>;
   /** insert a single row into the table: "audit_log" */
@@ -1055,6 +1062,12 @@ export type Mutation_RootDelete_User_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootGoogleAuthArgs = {
   googleAuthInput: GoogleAuthInput;
+};
+
+
+/** mutation root */
+export type Mutation_RootGoogleCalendarActivationArgs = {
+  googleCalendarActivationInput: GoogleCalendarActivationInput;
 };
 
 
@@ -3127,6 +3140,13 @@ export type GoogleAuthMutationVariables = Exact<{
 
 export type GoogleAuthMutation = { __typename?: 'mutation_root', googleAuth?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
+export type GoogleCalendarActivationMutationVariables = Exact<{
+  googleCalendarActivationInput: GoogleCalendarActivationInput;
+}>;
+
+
+export type GoogleCalendarActivationMutation = { __typename?: 'mutation_root', googleCalendarActivation: any };
+
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
@@ -3188,6 +3208,39 @@ export function useGoogleAuthMutation(baseOptions?: Apollo.MutationHookOptions<G
 export type GoogleAuthMutationHookResult = ReturnType<typeof useGoogleAuthMutation>;
 export type GoogleAuthMutationResult = Apollo.MutationResult<GoogleAuthMutation>;
 export type GoogleAuthMutationOptions = Apollo.BaseMutationOptions<GoogleAuthMutation, GoogleAuthMutationVariables>;
+export const GoogleCalendarActivationDocument = gql`
+    mutation googleCalendarActivation($googleCalendarActivationInput: GoogleCalendarActivationInput!) {
+  googleCalendarActivation(
+    googleCalendarActivationInput: $googleCalendarActivationInput
+  )
+}
+    `;
+export type GoogleCalendarActivationMutationFn = Apollo.MutationFunction<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>;
+
+/**
+ * __useGoogleCalendarActivationMutation__
+ *
+ * To run a mutation, you first call `useGoogleCalendarActivationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGoogleCalendarActivationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [googleCalendarActivationMutation, { data, loading, error }] = useGoogleCalendarActivationMutation({
+ *   variables: {
+ *      googleCalendarActivationInput: // value for 'googleCalendarActivationInput'
+ *   },
+ * });
+ */
+export function useGoogleCalendarActivationMutation(baseOptions?: Apollo.MutationHookOptions<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>(GoogleCalendarActivationDocument, options);
+      }
+export type GoogleCalendarActivationMutationHookResult = ReturnType<typeof useGoogleCalendarActivationMutation>;
+export type GoogleCalendarActivationMutationResult = Apollo.MutationResult<GoogleCalendarActivationMutation>;
+export type GoogleCalendarActivationMutationOptions = Apollo.BaseMutationOptions<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($loginInput: LoginInput!) {
   login(loginInput: $loginInput) {

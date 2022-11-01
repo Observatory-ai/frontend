@@ -13,12 +13,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { googleLogout, TokenResponse, useGoogleLogin } from '@react-oauth/google';
+import { CodeResponse, googleLogout, useGoogleLogin } from '@react-oauth/google';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../authentication/contexts/AuthContext';
-import { useLogoutMutation } from '../../generated/graphql';
+import { useGoogleCalendarActivationMutation, useLogoutMutation } from '../../generated/graphql';
 import theme from '../../theme';
 import Iconify from './Iconify';
 
@@ -31,6 +31,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation('common');
+  const [activateGoogleCalendar] = useGoogleCalendarActivationMutation();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -56,14 +57,14 @@ const NavBar = () => {
     setIsDrawerOpen((prev) => !prev);
   };
 
-  const handleGoogleCalendarActivation = (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
-    console.log(response);
+  const handleGoogleCalendarActivation = (response: Omit<CodeResponse, 'error' | 'error_description' | 'error_uri'>) => {
+    activateGoogleCalendar({ variables: { googleCalendarActivationInput: { activationCode: response.code } } });
     // hasGrantedAllScopesGoogle(response, 'https://www.googleapis.com/auth/cloud-platform.read-only')
   };
 
   const requestGoogleCalendarAccess = useGoogleLogin({
     scope: 'https://www.googleapis.com/auth/calendar.events.readonly',
-    prompt: '',
+    flow: 'auth-code',
     hint: user?.email,
     onSuccess: handleGoogleCalendarActivation,
   });
@@ -71,7 +72,6 @@ const NavBar = () => {
   const handleGoogleCalendarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       requestGoogleCalendarAccess();
-      // send credentials to backend
     }
   };
 
