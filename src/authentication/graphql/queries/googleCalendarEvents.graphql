@@ -1,5 +1,5 @@
-query GoogleCalendarEvents {
-  googleCalendarEvents {
+query GoogleCalendarEvents($googleCalendarEventsInput: GoogleCalendarEventsInput!) {
+  googleCalendarEvents(googleCalendarEventsInput: $googleCalendarEventsInput) {
     items {
       creator {
         email

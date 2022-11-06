@@ -74,6 +74,13 @@ export type GoogleCalendarActivationInput = {
   activationCode?: InputMaybe<Scalars['String']>;
 };
 
+export type GoogleCalendarEventsInput = {
+  orderBy?: InputMaybe<Scalars['String']>;
+  singleEvents?: InputMaybe<Scalars['Boolean']>;
+  timeMax?: InputMaybe<Scalars['String']>;
+  timeMin?: InputMaybe<Scalars['String']>;
+};
+
 export type GoogleCalendarEventsOutput = {
   __typename?: 'GoogleCalendarEventsOutput';
   accessRole?: Maybe<Scalars['String']>;
@@ -1456,6 +1463,11 @@ export type Query_RootAuth_Token_AggregateArgs = {
 
 export type Query_RootAuth_Token_By_PkArgs = {
   id: Scalars['Int'];
+};
+
+
+export type Query_RootGoogleCalendarEventsArgs = {
+  googleCalendarEventsInput: GoogleCalendarEventsInput;
 };
 
 
@@ -3242,7 +3254,9 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
-export type GoogleCalendarEventsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GoogleCalendarEventsQueryVariables = Exact<{
+  googleCalendarEventsInput: GoogleCalendarEventsInput;
+}>;
 
 
 export type GoogleCalendarEventsQuery = { __typename?: 'query_root', googleCalendarEvents?: { __typename?: 'GoogleCalendarEventsOutput', items?: Array<{ __typename?: 'Items', creator?: { __typename?: 'Creator', email?: string | null } | null, organizer?: { __typename?: 'Organizer', email?: string | null } | null } | null> | null } | null };
@@ -3455,8 +3469,8 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const GoogleCalendarEventsDocument = gql`
-    query GoogleCalendarEvents {
-  googleCalendarEvents {
+    query GoogleCalendarEvents($googleCalendarEventsInput: GoogleCalendarEventsInput!) {
+  googleCalendarEvents(googleCalendarEventsInput: $googleCalendarEventsInput) {
     items {
       creator {
         email
@@ -3481,10 +3495,11 @@ export const GoogleCalendarEventsDocument = gql`
  * @example
  * const { data, loading, error } = useGoogleCalendarEventsQuery({
  *   variables: {
+ *      googleCalendarEventsInput: // value for 'googleCalendarEventsInput'
  *   },
  * });
  */
-export function useGoogleCalendarEventsQuery(baseOptions?: Apollo.QueryHookOptions<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>) {
+export function useGoogleCalendarEventsQuery(baseOptions: Apollo.QueryHookOptions<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>(GoogleCalendarEventsDocument, options);
       }
