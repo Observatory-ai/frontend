@@ -6,7 +6,7 @@ type AppProviderProps = {
   children: React.ReactNode;
 };
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const { dispatch, accessToken } = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
   // const errorLink = onError(({ graphQLErrors, networkError }) => {
   //   if (graphQLErrors)
   //     graphQLErrors.map(({ message, extensions }) => {
@@ -19,6 +19,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const authLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers }: { headers: Headers }) => {
+      const accessToken = localStorage.getItem('accessToken');
       return {
         headers: {
           ...headers,
@@ -36,26 +37,31 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
       if (login) {
         const { accessToken, email, username, uuid } = login;
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
+        localStorage.setItem('accessToken', accessToken);
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
       }
 
       if (register) {
         const { accessToken, email, username, uuid } = register;
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
+        localStorage.setItem('accessToken', accessToken);
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
       }
 
       if (refreshTokens) {
         const { accessToken, email, username, uuid } = refreshTokens;
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
+        localStorage.setItem('accessToken', accessToken);
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
       }
 
       if (googleAuth) {
         const { accessToken, email, username, uuid } = googleAuth;
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { accessToken, user: { email, username, uuid } } });
+        localStorage.setItem('accessToken', accessToken);
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
       }
 
       if (logout) {
-        dispatch({ type: AuthReducerAction.logout, payload: { accessToken: null, user: null } });
+        localStorage.removeItem('accessToken');
+        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
       }
 
       return result;

@@ -3211,13 +3211,6 @@ export type GoogleAuthMutationVariables = Exact<{
 
 export type GoogleAuthMutation = { __typename?: 'mutation_root', googleAuth?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
 
-export type GoogleCalendarActivationMutationVariables = Exact<{
-  googleCalendarActivationInput: GoogleCalendarActivationInput;
-}>;
-
-
-export type GoogleCalendarActivationMutation = { __typename?: 'mutation_root', googleCalendarActivation: any };
-
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
@@ -3241,6 +3234,13 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+
+export type GoogleCalendarActivationMutationVariables = Exact<{
+  googleCalendarActivationInput: GoogleCalendarActivationInput;
+}>;
+
+
+export type GoogleCalendarActivationMutation = { __typename?: 'mutation_root', googleCalendarActivation: any };
 
 export type GoogleCalendarEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3284,39 +3284,6 @@ export function useGoogleAuthMutation(baseOptions?: Apollo.MutationHookOptions<G
 export type GoogleAuthMutationHookResult = ReturnType<typeof useGoogleAuthMutation>;
 export type GoogleAuthMutationResult = Apollo.MutationResult<GoogleAuthMutation>;
 export type GoogleAuthMutationOptions = Apollo.BaseMutationOptions<GoogleAuthMutation, GoogleAuthMutationVariables>;
-export const GoogleCalendarActivationDocument = gql`
-    mutation googleCalendarActivation($googleCalendarActivationInput: GoogleCalendarActivationInput!) {
-  googleCalendarActivation(
-    googleCalendarActivationInput: $googleCalendarActivationInput
-  )
-}
-    `;
-export type GoogleCalendarActivationMutationFn = Apollo.MutationFunction<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>;
-
-/**
- * __useGoogleCalendarActivationMutation__
- *
- * To run a mutation, you first call `useGoogleCalendarActivationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGoogleCalendarActivationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [googleCalendarActivationMutation, { data, loading, error }] = useGoogleCalendarActivationMutation({
- *   variables: {
- *      googleCalendarActivationInput: // value for 'googleCalendarActivationInput'
- *   },
- * });
- */
-export function useGoogleCalendarActivationMutation(baseOptions?: Apollo.MutationHookOptions<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>(GoogleCalendarActivationDocument, options);
-      }
-export type GoogleCalendarActivationMutationHookResult = ReturnType<typeof useGoogleCalendarActivationMutation>;
-export type GoogleCalendarActivationMutationResult = Apollo.MutationResult<GoogleCalendarActivationMutation>;
-export type GoogleCalendarActivationMutationOptions = Apollo.BaseMutationOptions<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($loginInput: LoginInput!) {
   login(loginInput: $loginInput) {
@@ -3454,6 +3421,39 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const GoogleCalendarActivationDocument = gql`
+    mutation googleCalendarActivation($googleCalendarActivationInput: GoogleCalendarActivationInput!) {
+  googleCalendarActivation(
+    googleCalendarActivationInput: $googleCalendarActivationInput
+  )
+}
+    `;
+export type GoogleCalendarActivationMutationFn = Apollo.MutationFunction<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>;
+
+/**
+ * __useGoogleCalendarActivationMutation__
+ *
+ * To run a mutation, you first call `useGoogleCalendarActivationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGoogleCalendarActivationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [googleCalendarActivationMutation, { data, loading, error }] = useGoogleCalendarActivationMutation({
+ *   variables: {
+ *      googleCalendarActivationInput: // value for 'googleCalendarActivationInput'
+ *   },
+ * });
+ */
+export function useGoogleCalendarActivationMutation(baseOptions?: Apollo.MutationHookOptions<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>(GoogleCalendarActivationDocument, options);
+      }
+export type GoogleCalendarActivationMutationHookResult = ReturnType<typeof useGoogleCalendarActivationMutation>;
+export type GoogleCalendarActivationMutationResult = Apollo.MutationResult<GoogleCalendarActivationMutation>;
+export type GoogleCalendarActivationMutationOptions = Apollo.BaseMutationOptions<GoogleCalendarActivationMutation, GoogleCalendarActivationMutationVariables>;
 export const GoogleCalendarEventsDocument = gql`
     query GoogleCalendarEvents {
   googleCalendarEvents {

@@ -17,8 +17,8 @@ import { CodeResponse, googleLogout, useGoogleLogin } from '@react-oauth/google'
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../authentication/contexts/AuthContext';
-import { useGoogleCalendarActivationMutation, useLogoutMutation } from '../../generated/graphql';
+import { AuthContext, AuthReducerAction } from '../../authentication/contexts/AuthContext';
+import { useGoogleCalendarActivationMutation, useLogoutMutation, useRefreshTokensMutation } from '../../generated/graphql';
 import theme from '../../theme';
 import Iconify from './Iconify';
 
@@ -26,12 +26,13 @@ const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const { user } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation('common');
   const [activateGoogleCalendar] = useGoogleCalendarActivationMutation();
+  const [refreshTokens, { data: refreshTokenData }] = useRefreshTokensMutation();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -111,7 +112,17 @@ const NavBar = () => {
         component={Link}
         to="/"
         onClick={async () => {
-          await logout(); /* if logout fails, need to call refreshTokens. If refreshTokens passes, logout the user, if it doesnt clear user and accessToken and refirect to login*/
+          try {
+            await logout();
+          } catch (e) {
+            try {
+              await refreshTokens();
+              await logout();
+            } catch (e) {
+              localStorage.removeItem('accessToken');
+              dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
+            }
+          }
           googleLogout();
           navigate('/login');
         }}>
