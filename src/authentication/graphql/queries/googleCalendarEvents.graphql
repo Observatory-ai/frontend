@@ -1,11 +1,14 @@
 query GoogleCalendarEvents {
   googleCalendarEvents {
     items {
-      creator {
-        email
+      summary
+      start {
+        dateTime
+        timeZone
       }
-      organizer {
-        email
+      end {
+        dateTime
+        timeZone
       }
     }
   }

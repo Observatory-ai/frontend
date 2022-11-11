@@ -3245,7 +3245,7 @@ export type RegisterMutation = { __typename?: 'mutation_root', register?: { __ty
 export type GoogleCalendarEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GoogleCalendarEventsQuery = { __typename?: 'query_root', googleCalendarEvents?: { __typename?: 'GoogleCalendarEventsOutput', items?: Array<{ __typename?: 'Items', creator?: { __typename?: 'Creator', email?: string | null } | null, organizer?: { __typename?: 'Organizer', email?: string | null } | null } | null> | null } | null };
+export type GoogleCalendarEventsQuery = { __typename?: 'query_root', googleCalendarEvents?: { __typename?: 'GoogleCalendarEventsOutput', items?: Array<{ __typename?: 'Items', summary?: string | null, start?: { __typename?: 'Start', dateTime?: string | null, timeZone?: string | null } | null, end?: { __typename?: 'End', dateTime?: string | null, timeZone?: string | null } | null } | null> | null } | null };
 
 
 export const GoogleAuthDocument = gql`
@@ -3458,11 +3458,14 @@ export const GoogleCalendarEventsDocument = gql`
     query GoogleCalendarEvents {
   googleCalendarEvents {
     items {
-      creator {
-        email
+      summary
+      start {
+        dateTime
+        timeZone
       }
-      organizer {
-        email
+      end {
+        dateTime
+        timeZone
       }
     }
   }
