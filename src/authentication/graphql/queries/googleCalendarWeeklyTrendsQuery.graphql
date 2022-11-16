@@ -1,0 +1,24 @@
+query GoogleCalendarWeeklyTrendsQuery {
+  googleCalendarEvents {
+    items {
+      summary
+      start {
+        dateTime
+        timeZone
+      }
+      end {
+        dateTime
+        timeZone
+      }
+      organizer {
+        email
+      }
+      attendees {
+        email
+        displayName
+        organizer
+        self
+      }
+    }
+  }
+}

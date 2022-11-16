@@ -1,4 +1,5 @@
 {
+  "chartType": "Line",
   "y_axis": "hours",
   "x_axis": "date",
   "data": [
