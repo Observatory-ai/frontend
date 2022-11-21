@@ -116,6 +116,7 @@ export const CalendarChart = ({ data }: ChartProps) => (
 export const LineChart = ({ data }: ChartProps) => (
   <ResponsiveLine
     data={data.data}
+    curve="monotoneX"
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
     xScale={{ type: 'point' }}
     yScale={{
