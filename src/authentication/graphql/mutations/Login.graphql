@@ -4,5 +4,6 @@ mutation Login($loginInput: LoginInput!) {
     email
     username
     uuid
+    avatar
   }
 }

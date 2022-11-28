@@ -1,16 +1,14 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link as MuiLink, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
 import { useGoogleAuthMutation, useRegisterMutation } from '../../../generated/graphql';
-import { signUpSchema } from '../../schemas/formSchemas';
 import { SignUpFormValues } from '../../types/formValues';
 import classes from './SignUpForm.styles';
 
@@ -33,7 +31,7 @@ const SignUpForm = () => {
 
   const { register, handleSubmit, formState } = useForm<SignUpFormValues>({
     defaultValues: { firstName: '', lastName: '', username: '', email: '', password: '', confirmPassword: '' },
-    resolver: yupResolver(signUpSchema),
+    // resolver: yupResolver(signUpSchema),
   });
 
   const { isSubmitting, errors } = formState;
@@ -56,6 +54,10 @@ const SignUpForm = () => {
   const loginWithGoogle = useGoogleLogin({
     onSuccess: onGoogleAuthSuccess,
   });
+
+  useEffect(() => {
+    console.log(typeof error, error);
+  }, [error]);
 
   return (
     <Container component="main" maxWidth="xs">

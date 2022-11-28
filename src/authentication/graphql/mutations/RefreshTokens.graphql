@@ -4,5 +4,6 @@ mutation RefreshTokens {
     email
     username
     uuid
+    avatar
   }
 }

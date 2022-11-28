@@ -1,4 +1,5 @@
 import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
+import { onError } from 'apollo-link-error';
 import { useContext } from 'react';
 import { AuthContext, AuthReducerAction } from './authentication/contexts/AuthContext';
 
@@ -7,15 +8,17 @@ type AppProviderProps = {
 };
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch } = useContext(AuthContext);
-  // const errorLink = onError(({ graphQLErrors, networkError }) => {
-  //   if (graphQLErrors)
-  //     graphQLErrors.map(({ message, extensions }) => {
-  //       console.log(`[GraphQL error]: Message: ${message}, Location: ${extensions.code}`);
-  //     });
-  //   if (networkError) {
-  //     console.log(`[Network error]: ${networkError}`);
-  //   }
-  // });
+  const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+    if (graphQLErrors)
+      // need to handle unauthorized error
+      // checkout retry link
+      graphQLErrors.map(({ message }) => {
+        // console.log(`[GraphQL error]: Message: ${JSON.parse(message).username}`);
+      });
+    if (networkError) {
+      console.log(`[Network error]: ${networkError}`);
+    }
+  });
 
   const authLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers }: { headers: Headers }) => {
@@ -36,27 +39,27 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       const logout = result.data?.logout;
 
       if (login) {
-        const { accessToken, email, username, uuid } = login;
+        const { accessToken, email, username, uuid, avatar } = login;
         localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
       }
 
       if (register) {
-        const { accessToken, email, username, uuid } = register;
+        const { accessToken, email, username, uuid, avatar } = register;
         localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
       }
 
       if (refreshTokens) {
-        const { accessToken, email, username, uuid } = refreshTokens;
+        const { accessToken, email, username, uuid, avatar } = refreshTokens;
         localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
       }
 
       if (googleAuth) {
-        const { accessToken, email, username, uuid } = googleAuth;
+        const { accessToken, email, username, uuid, avatar } = googleAuth;
         localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid } } });
+        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
       }
 
       if (logout) {
@@ -76,7 +79,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const createApolloClient = () => {
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: ApolloLink.from([authLink, hasuraLink]), // restLink needs to be the last link in the chain
+      link: ApolloLink.from([errorLink as unknown as ApolloLink, authLink, hasuraLink]),
       connectToDevTools: true,
     });
   };

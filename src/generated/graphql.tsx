@@ -29,6 +29,7 @@ export type Scalars = {
 export type AuthOutput = {
   __typename?: 'AuthOutput';
   accessToken: Scalars['String'];
+  avatar?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   username: Scalars['String'];
   uuid: Scalars['String'];
@@ -612,9 +613,12 @@ export type Audit_Log_Variance_Order_By = {
 /** columns and relationships of "auth_token" */
 export type Auth_Token = {
   __typename?: 'auth_token';
+  createdAt: Scalars['timestamp'];
+  deletedAt?: Maybe<Scalars['timestamp']>;
   id: Scalars['Int'];
   ip?: Maybe<Scalars['String']>;
   refreshToken: Scalars['String'];
+  updatedAt: Scalars['timestamp'];
   /** An object relationship */
   user: User;
   userAgent: Scalars['String'];
@@ -691,9 +695,12 @@ export type Auth_Token_Bool_Exp = {
   _and?: InputMaybe<Array<Auth_Token_Bool_Exp>>;
   _not?: InputMaybe<Auth_Token_Bool_Exp>;
   _or?: InputMaybe<Array<Auth_Token_Bool_Exp>>;
+  createdAt?: InputMaybe<Timestamp_Comparison_Exp>;
+  deletedAt?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
   ip?: InputMaybe<String_Comparison_Exp>;
   refreshToken?: InputMaybe<String_Comparison_Exp>;
+  updatedAt?: InputMaybe<Timestamp_Comparison_Exp>;
   user?: InputMaybe<User_Bool_Exp>;
   userAgent?: InputMaybe<String_Comparison_Exp>;
   userId?: InputMaybe<Int_Comparison_Exp>;
@@ -713,9 +720,12 @@ export type Auth_Token_Inc_Input = {
 
 /** input type for inserting data into table "auth_token" */
 export type Auth_Token_Insert_Input = {
+  createdAt?: InputMaybe<Scalars['timestamp']>;
+  deletedAt?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['Int']>;
   ip?: InputMaybe<Scalars['String']>;
   refreshToken?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['timestamp']>;
   user?: InputMaybe<User_Obj_Rel_Insert_Input>;
   userAgent?: InputMaybe<Scalars['String']>;
   userId?: InputMaybe<Scalars['Int']>;
@@ -724,18 +734,24 @@ export type Auth_Token_Insert_Input = {
 /** aggregate max on columns */
 export type Auth_Token_Max_Fields = {
   __typename?: 'auth_token_max_fields';
+  createdAt?: Maybe<Scalars['timestamp']>;
+  deletedAt?: Maybe<Scalars['timestamp']>;
   id?: Maybe<Scalars['Int']>;
   ip?: Maybe<Scalars['String']>;
   refreshToken?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamp']>;
   userAgent?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['Int']>;
 };
 
 /** order by max() on columns of table "auth_token" */
 export type Auth_Token_Max_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  deletedAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   ip?: InputMaybe<Order_By>;
   refreshToken?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
   userAgent?: InputMaybe<Order_By>;
   userId?: InputMaybe<Order_By>;
 };
@@ -743,18 +759,24 @@ export type Auth_Token_Max_Order_By = {
 /** aggregate min on columns */
 export type Auth_Token_Min_Fields = {
   __typename?: 'auth_token_min_fields';
+  createdAt?: Maybe<Scalars['timestamp']>;
+  deletedAt?: Maybe<Scalars['timestamp']>;
   id?: Maybe<Scalars['Int']>;
   ip?: Maybe<Scalars['String']>;
   refreshToken?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['timestamp']>;
   userAgent?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['Int']>;
 };
 
 /** order by min() on columns of table "auth_token" */
 export type Auth_Token_Min_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  deletedAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   ip?: InputMaybe<Order_By>;
   refreshToken?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
   userAgent?: InputMaybe<Order_By>;
   userId?: InputMaybe<Order_By>;
 };
@@ -777,9 +799,12 @@ export type Auth_Token_On_Conflict = {
 
 /** Ordering options when selecting data from "auth_token". */
 export type Auth_Token_Order_By = {
+  createdAt?: InputMaybe<Order_By>;
+  deletedAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   ip?: InputMaybe<Order_By>;
   refreshToken?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
   user?: InputMaybe<User_Order_By>;
   userAgent?: InputMaybe<Order_By>;
   userId?: InputMaybe<Order_By>;
@@ -793,11 +818,17 @@ export type Auth_Token_Pk_Columns_Input = {
 /** select columns of table "auth_token" */
 export enum Auth_Token_Select_Column {
   /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  DeletedAt = 'deletedAt',
+  /** column name */
   Id = 'id',
   /** column name */
   Ip = 'ip',
   /** column name */
   RefreshToken = 'refreshToken',
+  /** column name */
+  UpdatedAt = 'updatedAt',
   /** column name */
   UserAgent = 'userAgent',
   /** column name */
@@ -806,9 +837,12 @@ export enum Auth_Token_Select_Column {
 
 /** input type for updating data in table "auth_token" */
 export type Auth_Token_Set_Input = {
+  createdAt?: InputMaybe<Scalars['timestamp']>;
+  deletedAt?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['Int']>;
   ip?: InputMaybe<Scalars['String']>;
   refreshToken?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['timestamp']>;
   userAgent?: InputMaybe<Scalars['String']>;
   userId?: InputMaybe<Scalars['Int']>;
 };
@@ -862,9 +896,12 @@ export type Auth_Token_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Auth_Token_Stream_Cursor_Value_Input = {
+  createdAt?: InputMaybe<Scalars['timestamp']>;
+  deletedAt?: InputMaybe<Scalars['timestamp']>;
   id?: InputMaybe<Scalars['Int']>;
   ip?: InputMaybe<Scalars['String']>;
   refreshToken?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['timestamp']>;
   userAgent?: InputMaybe<Scalars['String']>;
   userId?: InputMaybe<Scalars['Int']>;
 };
@@ -885,11 +922,17 @@ export type Auth_Token_Sum_Order_By = {
 /** update columns of table "auth_token" */
 export enum Auth_Token_Update_Column {
   /** column name */
+  CreatedAt = 'createdAt',
+  /** column name */
+  DeletedAt = 'deletedAt',
+  /** column name */
   Id = 'id',
   /** column name */
   Ip = 'ip',
   /** column name */
   RefreshToken = 'refreshToken',
+  /** column name */
+  UpdatedAt = 'updatedAt',
   /** column name */
   UserAgent = 'userAgent',
   /** column name */
@@ -3209,14 +3252,14 @@ export type GoogleAuthMutationVariables = Exact<{
 }>;
 
 
-export type GoogleAuthMutation = { __typename?: 'mutation_root', googleAuth?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type GoogleAuthMutation = { __typename?: 'mutation_root', googleAuth?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string, avatar?: string | null } | null };
 
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
 
 
-export type LoginMutation = { __typename?: 'mutation_root', login?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type LoginMutation = { __typename?: 'mutation_root', login?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string, avatar?: string | null } | null };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3226,14 +3269,14 @@ export type LogoutMutation = { __typename?: 'mutation_root', logout: boolean };
 export type RefreshTokensMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RefreshTokensMutation = { __typename?: 'mutation_root', refreshTokens?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type RefreshTokensMutation = { __typename?: 'mutation_root', refreshTokens?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string, avatar?: string | null } | null };
 
 export type RegisterMutationVariables = Exact<{
   registerInput: RegisterInput;
 }>;
 
 
-export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string } | null };
+export type RegisterMutation = { __typename?: 'mutation_root', register?: { __typename?: 'AuthOutput', accessToken: string, email: string, username: string, uuid: string, avatar?: string | null } | null };
 
 export type GoogleCalendarActivationMutationVariables = Exact<{
   googleCalendarActivationInput: GoogleCalendarActivationInput;
@@ -3255,6 +3298,7 @@ export const GoogleAuthDocument = gql`
     email
     username
     uuid
+    avatar
   }
 }
     `;
@@ -3291,6 +3335,7 @@ export const LoginDocument = gql`
     email
     username
     uuid
+    avatar
   }
 }
     `;
@@ -3357,6 +3402,7 @@ export const RefreshTokensDocument = gql`
     email
     username
     uuid
+    avatar
   }
 }
     `;
@@ -3392,6 +3438,7 @@ export const RegisterDocument = gql`
     email
     username
     uuid
+    avatar
   }
 }
     `;

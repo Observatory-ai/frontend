@@ -4,5 +4,6 @@ mutation Register($registerInput: RegisterInput!) {
     email
     username
     uuid
+    avatar
   }
 }

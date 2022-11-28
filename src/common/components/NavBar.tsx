@@ -5,7 +5,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Switch } from '@mui/material';
+import { Avatar, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Switch } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -20,6 +20,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext, AuthReducerAction } from '../../authentication/contexts/AuthContext';
 import { useGoogleCalendarActivationMutation, useLogoutMutation, useRefreshTokensMutation } from '../../generated/graphql';
 import theme from '../../theme';
+import LogoIcon from '../assets/LogoIcon';
 import Iconify from './Iconify';
 
 const NavBar = () => {
@@ -80,6 +81,22 @@ const NavBar = () => {
     navigate('/dashboard');
   };
 
+  const logoutUser = async () => {
+    try {
+      await logout();
+    } catch (e) {
+      try {
+        await refreshTokens();
+        await logout();
+      } catch (e) {
+        localStorage.removeItem('accessToken');
+        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
+      }
+    }
+    googleLogout();
+    navigate('/login');
+  };
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -98,7 +115,7 @@ const NavBar = () => {
       onClose={handleMenuClose}>
       <MenuItem onClick={handleMenuClose}>
         <IconButton size="small" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
-          <AccountCircle />
+          {user && user.avatar ? <Avatar alt={user.username} sx={{ width: 28, height: 28 }} src={user.avatar} /> : <AccountCircle />}
         </IconButton>
         <Typography>{t('menu.profile', { ns: 'common' })}</Typography>
       </MenuItem>
@@ -108,25 +125,8 @@ const NavBar = () => {
         </IconButton>
         <Typography>{t('menu.settings', { ns: 'common' })}</Typography>
       </MenuItem>
-      <MenuItem
-        component={Link}
-        to="/"
-        onClick={async () => {
-          try {
-            await logout();
-          } catch (e) {
-            try {
-              await refreshTokens();
-              await logout();
-            } catch (e) {
-              localStorage.removeItem('accessToken');
-              dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
-            }
-          }
-          googleLogout();
-          navigate('/login');
-        }}>
-        <IconButton size="small" aria-label="logout" color="inherit">
+      <MenuItem component={Link} to="/" onClick={logoutUser}>
+        <IconButton size="small" aria-label="logout" color="inherit" onClick={logoutUser}>
           <LogoutIcon />
         </IconButton>
         <Typography>{t('menu.logout', { ns: 'common' })}</Typography>
@@ -152,7 +152,7 @@ const NavBar = () => {
       onClose={handleMobileMenuClose}>
       <MenuItem>
         <IconButton size="large" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
-          <AccountCircle />
+          {user && user.avatar ? <Avatar alt={user.username} sx={{ width: 28, height: 28 }} src={user.avatar} /> : <AccountCircle />}
         </IconButton>
         <Typography>{t('menu.profile', { ns: 'common' })}</Typography>
       </MenuItem>
@@ -163,7 +163,7 @@ const NavBar = () => {
         <Typography>{t('menu.settings', { ns: 'common' })}</Typography>
       </MenuItem>
       <MenuItem>
-        <IconButton size="large" aria-label="logout" color="inherit">
+        <IconButton size="large" aria-label="logout" color="inherit" onClick={logoutUser}>
           <LogoutIcon />
         </IconButton>
         <Typography>{t('menu.logout', { ns: 'common' })}</Typography>
@@ -171,16 +171,26 @@ const NavBar = () => {
     </Menu>
   );
   const drawerWidth = 240;
+
+  // fontFamily: 'Almarai, sans-serif'
+  // fontFamily: 'Archivo, sans-serif'
+  // fontFamily: 'Space Grotesk, sans-serif'
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
           <IconButton onClick={handleDrawerToggle} size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
             {isDrawerOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
-          <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-            <Typography>{user ? user.username : ''}</Typography>
+            <LogoIcon width={40} height={40} viewBox="0, 0, 400,400" />
+            <Typography noWrap component="div" sx={{ ml: 2, fontSize: '1.35rem', fontFamily: 'Archivo, sans-serif' }}>
+              Observatory
+            </Typography>
+          </Box>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+            <Typography>{user && user.username}</Typography>
             <IconButton
               size="large"
               edge="end"
@@ -189,7 +199,7 @@ const NavBar = () => {
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit">
-              <AccountCircle />
+              {user && user.avatar ? <Avatar alt={user.username} sx={{ width: 30, height: 30 }} src={user.avatar} /> : <AccountCircle />}
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

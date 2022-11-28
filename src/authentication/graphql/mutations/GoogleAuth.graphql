@@ -4,5 +4,6 @@ mutation GoogleAuth($googleAuthInput: GoogleAuthInput!) {
     email
     username
     uuid
+    avatar
   }
 }
