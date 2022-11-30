@@ -8,16 +8,23 @@ type AppProviderProps = {
 };
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch } = useContext(AuthContext);
-  const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
-    if (graphQLErrors)
-      // need to handle unauthorized error
-      // checkout retry link
-      graphQLErrors.map(({ message }) => {
-        // console.log(`[GraphQL error]: Message: ${JSON.parse(message).username}`);
-      });
-    if (networkError) {
-      console.log(`[Network error]: ${networkError}`);
-    }
+  const hasuraURI = process.env.REACT_APP_HASURA as string;
+  const adminSecret = process.env.REACT_APP_ADMIN_SECRET as string;
+  const errorLink = onError(({ graphQLErrors, networkError, response }) => {
+    // need to handle unauthorized error
+    // checkout retry link
+    // if (networkError) {
+    //   console.log(`[Network error]: ${networkError}`);
+    // }
+    // if (graphQLErrors) {
+    //   const errors = graphQLErrors.map((error) => {
+    //     const parsedMessage = JSON.parse(error.message);
+    //     return { extensions: error.extensions, message: parsedMessage };
+    //   }) as GraphQLError[];
+    //   if (response) {
+    //     response.errors = errors;
+    //   }
+    // }
   });
 
   const authLink = new ApolloLink((operation, forward) => {
@@ -27,7 +34,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         headers: {
           ...headers,
           authorization: accessToken ? `Bearer ${accessToken}` : '',
-          'x-hasura-admin-secret': 'admin', // switch to .env variable
+          'x-hasura-admin-secret': adminSecret, // switch to .env variable
         },
       };
     });
@@ -73,13 +80,13 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const hasuraLink = new HttpLink({
     credentials: 'include', // same-origin (same domains)
-    uri: 'http://localhost:8080/v1/graphql', // switch to env variable
+    uri: hasuraURI,
   });
 
   const createApolloClient = () => {
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: ApolloLink.from([errorLink as unknown as ApolloLink, authLink, hasuraLink]),
+      link: ApolloLink.from([authLink, errorLink as unknown as ApolloLink, hasuraLink]),
       connectToDevTools: true,
     });
   };
