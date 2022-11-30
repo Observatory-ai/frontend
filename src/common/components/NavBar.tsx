@@ -95,7 +95,7 @@ const NavBar = () => {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}>
-      <MenuItem onClick={handleMenuClose}>
+      {/* <MenuItem onClick={handleMenuClose}>
         <IconButton size="small" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
           <AccountCircle />
         </IconButton>
@@ -106,7 +106,7 @@ const NavBar = () => {
           <SettingsIcon />
         </IconButton>
         <Typography>{t('menu.settings', { ns: 'common' })}</Typography>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem
         component={Link}
         to="/"

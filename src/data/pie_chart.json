@@ -3,32 +3,27 @@
     {
       "id": "hack",
       "label": "hack",
-      "value": 174,
-      "color": "hsl(171, 70%, 50%)"
+      "value": 174
     },
     {
       "id": "css",
       "label": "css",
-      "value": 495,
-      "color": "hsl(301, 70%, 50%)"
+      "value": 495
     },
     {
       "id": "javascript",
       "label": "javascript",
-      "value": 370,
-      "color": "hsl(13, 70%, 50%)"
+      "value": 370
     },
     {
       "id": "stylus",
       "label": "stylus",
-      "value": 253,
-      "color": "hsl(297, 70%, 50%)"
+      "value": 253
     },
     {
       "id": "c",
       "label": "c",
-      "value": 278,
-      "color": "hsl(19, 70%, 50%)"
+      "value": 278
     }
   ]
 }

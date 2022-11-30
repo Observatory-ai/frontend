@@ -151,16 +151,16 @@ export const LineChart = ({ data }: ChartProps) => (
     useMesh={true}
     legends={[
       {
-        anchor: 'bottom-right',
+        anchor: 'top-right',
         direction: 'column',
         justify: false,
         translateX: 100,
         translateY: 0,
         itemsSpacing: 0,
         itemDirection: 'left-to-right',
-        itemWidth: 80,
+        itemWidth: 200,
         itemHeight: 20,
-        itemOpacity: 0.75,
+        itemOpacity: 0.95,
         symbolSize: 12,
         symbolShape: 'circle',
         symbolBorderColor: 'rgba(0, 0, 0, .5)',
@@ -200,31 +200,31 @@ export const PieChart = ({ data }: ChartProps) => (
       from: 'color',
       modifiers: [['darker', 2]],
     }}
-    legends={[
-      {
-        anchor: 'bottom',
-        direction: 'row',
-        justify: false,
-        translateX: 0,
-        translateY: 56,
-        itemsSpacing: 0,
-        itemWidth: 100,
-        itemHeight: 18,
-        itemTextColor: '#999',
-        itemDirection: 'left-to-right',
-        itemOpacity: 1,
-        symbolSize: 18,
-        symbolShape: 'circle',
-        effects: [
-          {
-            on: 'hover',
-            style: {
-              itemTextColor: '#000',
-            },
-          },
-        ],
-      },
-    ]}
+    // legends={[
+    //   {
+    //     anchor: 'bottom',
+    //     direction: 'row',
+    //     justify: false,
+    //     translateX: 0,
+    //     translateY: 56,
+    //     itemsSpacing: 0,
+    //     itemWidth: 100,
+    //     itemHeight: 18,
+    //     itemTextColor: '#999',
+    //     itemDirection: 'left-to-right',
+    //     itemOpacity: 1,
+    //     symbolSize: 18,
+    //     symbolShape: 'circle',
+    //     effects: [
+    //       {
+    //         on: 'hover',
+    //         style: {
+    //           itemTextColor: '#000',
+    //         },
+    //       },
+    //     ],
+    //   },
+    // ]}
   />
 );
 
