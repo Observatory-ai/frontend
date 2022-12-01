@@ -382,6 +382,23 @@ function checkWithinWorkHours(event: CalendarEventData, workHours: number[]) {
   }
 }
 
+// function computeFreeTime(timeSlots: string[][]) {
+//   let cur = '9:00';
+//   const freeTime = [];
+// }
+
+function getTimeString(date: Date) {
+  let hours = date.getHours().toString();
+  let minutes = date.getMinutes().toString();
+  if (parseInt(minutes) < 10) {
+    minutes = '0' + minutes;
+  }
+  if (parseInt(hours) < 10) {
+    hours = '0' + hours;
+  }
+  return hours + ':' + minutes;
+}
+
 function buildCardInsights(weeklyData: CalendarEventData[], userEmail: string) {
   const timeInMeetings = {} as DataCardProps;
   const timeOutsideMeetings = {} as DataCardProps;
@@ -459,13 +476,13 @@ function buildCardInsights(weeklyData: CalendarEventData[], userEmail: string) {
   eventsWithinWorkHours.forEach((event) => {
     if (timeSlots.has(event.start.toDateString())) {
       const temp = timeSlots.get(event.start.toDateString())!;
-      temp.push([event.start.toLocaleTimeString(), event.end.toLocaleTimeString()]);
+      temp.push([getTimeString(event.start), getTimeString(event.end)]);
       timeSlots.set(event.start.toDateString(), temp);
     } else {
-      timeSlots.set(event.start.toDateString(), [[event.start.toLocaleTimeString(), event.end.toLocaleTimeString()]]);
+      timeSlots.set(event.start.toDateString(), [[getTimeString(event.start), getTimeString(event.end)]]);
     }
   });
-  console.log(timeSlots);
+  // console.log(timeSlots);
 
   const weeklyAvg = sumWeekDurationMinutes / 7;
   const TIMString = Math.floor(weeklyAvg / 60) + 'h ' + Math.round(weeklyAvg % 60) + 'm';
@@ -540,7 +557,7 @@ const DashboardPage = () => {
 
   const handleButtonClick = () => {
     getWeeklyTrends();
-    console.log('weeklyTrendsData', weeklyTrendsData);
+    // console.log('weeklyTrendsData', weeklyTrendsData);
 
     const dataToChange = weeklyTrendsData?.googleCalendarEvents?.items?.map((event) => {
       return {
@@ -562,32 +579,32 @@ const DashboardPage = () => {
     const weeklyTrends = buildWeeklyTrendsData(dataToChange!);
 
     const newData = buildBarData(weeklyTrends!);
-    console.log('Bar Data', newData);
+    // console.log('Bar Data', newData);
     setNewData(newData);
 
     const newLineData = buildLineData(weeklyTrends!);
-    console.log('Line Data', newLineData);
+    // console.log('Line Data', newLineData);
     setNewLineData(newLineData);
 
     const newCardInsights = buildCardInsights(weeklyTrends!, user!.email);
-    console.log('newCardInsights', newCardInsights);
+    // console.log('newCardInsights', newCardInsights);
 
     const newCardGridData = [newCardInsights[0], newCardInsights[1], newCardInsights[2]];
     setNewCardInsights(newCardGridData);
 
     const meetingWithAttendeesData = meetingWithAttendeeData(weeklyTrends!, user!.email);
-    console.log('meetingWithAttendeesData', meetingWithAttendeesData);
+    // console.log('meetingWithAttendeesData', meetingWithAttendeesData);
 
     const clientPieData = buildClientPieData(meetingWithAttendeesData);
-    console.log('clientPieData', clientPieData);
+    // console.log('clientPieData', clientPieData);
     setNewClientPieData(clientPieData);
 
     const teamPieData = buildTeamPieData(meetingWithAttendeesData);
-    console.log('teamPieData', teamPieData);
+    // console.log('teamPieData', teamPieData);
     setNewTeamPieData(teamPieData);
 
     const VsPieData = buildVsPieData(meetingWithAttendeesData);
-    console.log('VsPieData', VsPieData);
+    // console.log('VsPieData', VsPieData);
     setNewVsPieData(VsPieData);
   };
 
