@@ -13,6 +13,9 @@ $ yarn
 
 ```
 PORT=4000
+REACT_APP_GOOGLE_AUTH_CLIENT_ID=
+REACT_APP_HASURA=http://localhost:8080/v1/graphql
+REACT_APP_ADMIN_SECRET=admin
 ```
 
 ## Run the web client

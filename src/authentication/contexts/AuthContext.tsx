@@ -3,18 +3,18 @@ import { User } from '../types/user';
 
 const initialState = {
   user: null,
-  accessToken: null,
 };
 
 type AuthContextValues = {
   user: User | null;
-  accessToken: string | null;
 };
 
 export const AuthContext = createContext<{
   user: User | null;
-  accessToken: string | null;
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<{
+    type: AuthReducerAction;
+    payload: AuthContextValues;
+  }>;
 }>({ ...initialState, dispatch: () => null });
 
 export enum AuthReducerAction {
@@ -25,7 +25,7 @@ export enum AuthReducerAction {
 const AuthReducer = (state: AuthContextValues, action: { type: AuthReducerAction; payload: AuthContextValues }) => {
   switch (action.type) {
     case AuthReducerAction.setCredentials:
-      return { accessToken: action.payload.accessToken, user: action.payload.user };
+      return { user: action.payload.user };
 
     case AuthReducerAction.logout:
       return { ...initialState };

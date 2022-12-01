@@ -31,7 +31,7 @@ export default function LoginForm() {
     event.preventDefault();
   };
 
-  const { register, handleSubmit, formState } = useForm<LoginFormValues>({
+  const { register, handleSubmit, formState, setError } = useForm<LoginFormValues>({
     defaultValues: { usernameOrEmail: '', password: '' },
     resolver: yupResolver(loginSchema),
   });
@@ -43,7 +43,7 @@ export default function LoginForm() {
       await login({ variables: { loginInput: { emailOrUsername: usernameOrEmail, password } } });
       navigate('/dashboard');
     } catch (e: any) {
-      console.log(e);
+      // setError('usernameOrEmail', { type: 'custom', message: e.message });
     }
   };
 
