@@ -26,6 +26,20 @@ export type Scalars = {
   uuid: any;
 };
 
+export type Attendees = {
+  __typename?: 'Attendees';
+  additionalGuests?: Maybe<Scalars['Int']>;
+  comment?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  optional?: Maybe<Scalars['Boolean']>;
+  organizer?: Maybe<Scalars['Boolean']>;
+  resource?: Maybe<Scalars['Boolean']>;
+  responseStatus?: Maybe<Scalars['String']>;
+  self?: Maybe<Scalars['Boolean']>;
+};
+
 export type AuthOutput = {
   __typename?: 'AuthOutput';
   accessToken: Scalars['String'];
@@ -102,6 +116,7 @@ export type Int_Comparison_Exp = {
 
 export type Items = {
   __typename?: 'Items';
+  attendees?: Maybe<Array<Maybe<Attendees>>>;
   created?: Maybe<Scalars['String']>;
   creator?: Maybe<Creator>;
   end?: Maybe<End>;
@@ -3288,7 +3303,12 @@ export type GoogleCalendarActivationMutation = { __typename?: 'mutation_root', g
 export type GoogleCalendarEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GoogleCalendarEventsQuery = { __typename?: 'query_root', googleCalendarEvents?: { __typename?: 'GoogleCalendarEventsOutput', items?: Array<{ __typename?: 'Items', creator?: { __typename?: 'Creator', email?: string | null } | null, organizer?: { __typename?: 'Organizer', email?: string | null } | null } | null> | null } | null };
+export type GoogleCalendarEventsQuery = { __typename?: 'query_root', googleCalendarEvents?: { __typename?: 'GoogleCalendarEventsOutput', items?: Array<{ __typename?: 'Items', summary?: string | null, start?: { __typename?: 'Start', dateTime?: string | null, timeZone?: string | null } | null, end?: { __typename?: 'End', dateTime?: string | null, timeZone?: string | null } | null } | null> | null } | null };
+
+export type GoogleCalendarWeeklyTrendsQueryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GoogleCalendarWeeklyTrendsQueryQuery = { __typename?: 'query_root', googleCalendarEvents?: { __typename?: 'GoogleCalendarEventsOutput', items?: Array<{ __typename?: 'Items', summary?: string | null, start?: { __typename?: 'Start', dateTime?: string | null, timeZone?: string | null } | null, end?: { __typename?: 'End', dateTime?: string | null, timeZone?: string | null } | null, organizer?: { __typename?: 'Organizer', email?: string | null } | null, attendees?: Array<{ __typename?: 'Attendees', email?: string | null, displayName?: string | null, organizer?: boolean | null, self?: boolean | null } | null> | null } | null> | null } | null };
 
 
 export const GoogleAuthDocument = gql`
@@ -3505,11 +3525,14 @@ export const GoogleCalendarEventsDocument = gql`
     query GoogleCalendarEvents {
   googleCalendarEvents {
     items {
-      creator {
-        email
+      summary
+      start {
+        dateTime
+        timeZone
       }
-      organizer {
-        email
+      end {
+        dateTime
+        timeZone
       }
     }
   }
@@ -3542,3 +3565,56 @@ export function useGoogleCalendarEventsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type GoogleCalendarEventsQueryHookResult = ReturnType<typeof useGoogleCalendarEventsQuery>;
 export type GoogleCalendarEventsLazyQueryHookResult = ReturnType<typeof useGoogleCalendarEventsLazyQuery>;
 export type GoogleCalendarEventsQueryResult = Apollo.QueryResult<GoogleCalendarEventsQuery, GoogleCalendarEventsQueryVariables>;
+export const GoogleCalendarWeeklyTrendsQueryDocument = gql`
+    query GoogleCalendarWeeklyTrendsQuery {
+  googleCalendarEvents {
+    items {
+      summary
+      start {
+        dateTime
+        timeZone
+      }
+      end {
+        dateTime
+        timeZone
+      }
+      organizer {
+        email
+      }
+      attendees {
+        email
+        displayName
+        organizer
+        self
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGoogleCalendarWeeklyTrendsQueryQuery__
+ *
+ * To run a query within a React component, call `useGoogleCalendarWeeklyTrendsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGoogleCalendarWeeklyTrendsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGoogleCalendarWeeklyTrendsQueryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGoogleCalendarWeeklyTrendsQueryQuery(baseOptions?: Apollo.QueryHookOptions<GoogleCalendarWeeklyTrendsQueryQuery, GoogleCalendarWeeklyTrendsQueryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GoogleCalendarWeeklyTrendsQueryQuery, GoogleCalendarWeeklyTrendsQueryQueryVariables>(GoogleCalendarWeeklyTrendsQueryDocument, options);
+      }
+export function useGoogleCalendarWeeklyTrendsQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GoogleCalendarWeeklyTrendsQueryQuery, GoogleCalendarWeeklyTrendsQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GoogleCalendarWeeklyTrendsQueryQuery, GoogleCalendarWeeklyTrendsQueryQueryVariables>(GoogleCalendarWeeklyTrendsQueryDocument, options);
+        }
+export type GoogleCalendarWeeklyTrendsQueryQueryHookResult = ReturnType<typeof useGoogleCalendarWeeklyTrendsQueryQuery>;
+export type GoogleCalendarWeeklyTrendsQueryLazyQueryHookResult = ReturnType<typeof useGoogleCalendarWeeklyTrendsQueryLazyQuery>;
+export type GoogleCalendarWeeklyTrendsQueryQueryResult = Apollo.QueryResult<GoogleCalendarWeeklyTrendsQueryQuery, GoogleCalendarWeeklyTrendsQueryQueryVariables>;

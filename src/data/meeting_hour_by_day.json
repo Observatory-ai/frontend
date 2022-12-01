@@ -1,0 +1,35 @@
+{
+  "chartType": "Bar",
+  "x_axis": "date",
+  "y_axis": "hours",
+  "data": [
+    {
+      "date": "Monday",
+      "hours": 5.5
+    },
+    {
+      "date": "Tuesday",
+      "hours": 2.0
+    },
+    {
+      "date": "Wednesday",
+      "hours": 6.5
+    },
+    {
+      "date": "Thursday",
+      "hours": 5.0
+    },
+    {
+      "date": "Friday",
+      "hours": 3.0
+    },
+    {
+      "date": "Saturday",
+      "hours": 0
+    },
+    {
+      "date": "Sunday",
+      "hours": 0
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "chartType": "Line",
+  "y_axis": "hours",
+  "x_axis": "date",
+  "data": [
+    {
+      "id": "Week 1",
+      "data": [
+        {
+          "x": "Monday",
+          "y": 5.5
+        },
+        {
+          "x": "Tuesday",
+          "y": 2.0
+        },
+        {
+          "x": "Wednesday",
+          "y": 6.5
+        },
+        {
+          "x": "Thursday",
+          "y": 5.0
+        },
+        {
+          "x": "Friday",
+          "y": 3.0
+        },
+        {
+          "x": "Saturday",
+          "y": 0
+        },
+        {
+          "x": "Sunday",
+          "y": 0
+        }
+      ]
+    }
+  ]
+}

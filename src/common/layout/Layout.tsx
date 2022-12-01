@@ -33,7 +33,7 @@ const Layout = ({ children }: Props) => {
       {!loading ? (
         <>
           <NavBar />
-          <Container sx={{ marginTop: '3rem' }}>{children}</Container>
+          <Container sx={{ marginTop: '5rem' }}>{children}</Container>
         </>
       ) : (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>

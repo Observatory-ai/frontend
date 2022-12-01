@@ -113,7 +113,7 @@ const NavBar = () => {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}>
-      <MenuItem onClick={handleMenuClose}>
+      {/* <MenuItem onClick={handleMenuClose}>
         <IconButton size="small" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
           {user && user.avatar ? <Avatar alt={user.username} sx={{ width: 28, height: 28 }} src={user.avatar} /> : <AccountCircle />}
         </IconButton>
@@ -124,7 +124,7 @@ const NavBar = () => {
           <SettingsIcon />
         </IconButton>
         <Typography>{t('menu.settings', { ns: 'common' })}</Typography>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem component={Link} to="/" onClick={logoutUser}>
         <IconButton size="small" aria-label="logout" color="inherit" onClick={logoutUser}>
           <LogoutIcon />

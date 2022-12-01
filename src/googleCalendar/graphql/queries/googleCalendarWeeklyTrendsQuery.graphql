@@ -1,4 +1,4 @@
-query GoogleCalendarEvents {
+query GoogleCalendarWeeklyTrendsQuery {
   googleCalendarEvents {
     items {
       summary
@@ -9,6 +9,15 @@ query GoogleCalendarEvents {
       end {
         dateTime
         timeZone
+      }
+      organizer {
+        email
+      }
+      attendees {
+        email
+        displayName
+        organizer
+        self
       }
     }
   }
