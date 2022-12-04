@@ -8,7 +8,7 @@ import NavBar from '../components/NavBar';
 type Props = { children: ReactNode };
 
 const Layout = ({ children }: Props) => {
-  const { user, accessToken, dispatch } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const [refreshTokens, { loading }] = useRefreshTokensMutation();
 
@@ -17,10 +17,12 @@ const Layout = ({ children }: Props) => {
       try {
         await refreshTokens();
       } catch (e) {
-        dispatch({ type: AuthReducerAction.logout, payload: { user: null, accessToken: null } });
+        localStorage.removeItem('accessToken');
+        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
         navigate('/login');
       }
     };
+    const accessToken = localStorage.getItem('accessToken');
     if (!user || !accessToken) {
       fetchRefreshTokens();
     }

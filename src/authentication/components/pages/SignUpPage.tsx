@@ -6,7 +6,7 @@ import { AuthContext, AuthReducerAction } from '../../contexts/AuthContext';
 import SignUpForm from '../forms/SignUpForm';
 
 function SignupPage() {
-  const { user, accessToken, dispatch } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const [refreshTokens, { loading }] = useRefreshTokensMutation();
 
@@ -16,9 +16,11 @@ function SignupPage() {
         await refreshTokens();
         navigate('/dashboard');
       } catch (e) {
-        dispatch({ type: AuthReducerAction.logout, payload: { user: null, accessToken: null } });
+        localStorage.removeItem('accessToken');
+        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
       }
     };
+    const accessToken = localStorage.getItem('accessToken');
     if (!user || !accessToken) {
       fetchRefreshTokens();
     }
