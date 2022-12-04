@@ -1,18 +1,17 @@
 import * as charts from '../../common/components/Chart';
 import Layout from '../../common/layout/Layout';
 
-import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
-import { Box, Card, Fab, Grid, Tooltip, Typography } from '@mui/material';
+import { Box, Card, Grid, Skeleton, Tooltip, Typography } from '@mui/material';
 import lineData from '../../data/line_chart.json';
 import barData from '../../data/meeting_hour_by_day.json';
 import pieData from '../../data/pie_chart.json';
 // import data from '../../data/BarChartData.json';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../authentication/contexts/AuthContext';
 import CardGrid from '../../card/CardGrid';
 import { DataCardProps } from '../../card/types/DataCardProps';
-import { useGoogleCalendarWeeklyTrendsQueryLazyQuery } from '../../generated/graphql';
+import { useGoogleCalendarWeeklyTrendsQueryQuery } from '../../generated/graphql';
 
 interface GoogleCalendarData {
   summary: string;
@@ -164,6 +163,7 @@ function buildLineData(weeklyData: CalendarEventData[]) {
     ['Friday', 0],
     ['Saturday', 0],
   ]);
+
   let currentWeek = weeklyData.at(0)!.week;
   weeklyData.forEach((event) => {
     if (event.durationHours < 24) {
@@ -187,6 +187,14 @@ function buildLineData(weeklyData: CalendarEventData[]) {
         ]);
         weeksMeetings.set(event.weekDay.toString(), event.durationHours);
       }
+    }
+
+    if (event === weeklyData.at(-1)) {
+      const xY = [] as { x: string; y: number }[];
+      weeksMeetings.forEach((value, key) => {
+        xY.push({ x: key, y: value });
+      });
+      data.data.push({ id: currentWeek, data: xY });
     }
   });
 
@@ -382,10 +390,31 @@ function checkWithinWorkHours(event: CalendarEventData, workHours: number[]) {
   }
 }
 
-// function computeFreeTime(timeSlots: string[][]) {
-//   let cur = '9:00';
-//   const freeTime = [];
-// }
+function computeFreeTime(timeSlots: string[][]) {
+  let cur = '09:00';
+  const freeTime = [];
+  const week = timeSlots[0][2];
+  timeSlots.sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]));
+  for (const slot of timeSlots) {
+    if (cur >= '17:00') {
+      break;
+    }
+    if (cur < slot[0]) {
+      const start = cur.at(0) === '0' ? cur.slice(1) : cur;
+      const end = slot[0].at(0) === '0' ? slot[0].slice(1) : slot[0];
+      freeTime.push([start, end, week]);
+    }
+    if (slot[1] > cur) {
+      cur = slot[1];
+    }
+  }
+
+  if (cur < '17:00') {
+    cur = cur.at(0) === '0' ? cur.slice(1) : cur;
+    freeTime.push([cur, '17:00', week]);
+  }
+  return freeTime;
+}
 
 function getTimeString(date: Date) {
   let hours = date.getHours().toString();
@@ -443,46 +472,33 @@ function buildCardInsights(weeklyData: CalendarEventData[], userEmail: string) {
     sum30DayDurationMinutes += event.durationMinutes;
   });
 
-  let previousEvent = eventsWithinWorkHours.at(0);
-  eventsWithinWorkHours.forEach((event) => {
-    if (event.week === weekToTrack) {
-      if (event.start.getHours() < 9 && event.end.getHours() < 17) {
-        sumFreeDurationMinutes += event.end.getHours() - 9 * 60 + event.end.getMinutes();
-      } else if (event.start.getHours() > 9 && event.end.getHours() > 17) {
-        sumFreeDurationMinutes += 17 - event.start.getHours() * 60 + event.start.getMinutes();
-      }
-
-      if (event.start.getTime() > previousEvent!.end.getTime()) {
-        if (event.start.getDay() === previousEvent!.end.getDay()) {
-          sumFreeDurationMinutes += (event.start.getTime() - previousEvent!.end.getTime()) / 60000;
-        }
-      }
-    }
-    if (event.start.getHours() < 9 && event.end.getHours() < 17) {
-      sum30DayFreeDurationMinutes += event.end.getHours() - 9 * 60 + event.end.getMinutes();
-    } else if (event.start.getHours() > 9 && event.end.getHours() > 17) {
-      sum30DayFreeDurationMinutes += 17 - event.start.getHours() * 60 + event.start.getMinutes();
-    }
-
-    if (event.start.getTime() > previousEvent!.end.getTime()) {
-      if (event.start.getDay() === previousEvent!.end.getDay()) {
-        sum30DayFreeDurationMinutes += (event.start.getTime() - previousEvent!.end.getTime()) / 60000;
-      }
-    }
-    previousEvent = event;
-  });
-
   const timeSlots = new Map<string, string[][]>();
+  const freeTimeMap = new Map<string, string[][]>();
   eventsWithinWorkHours.forEach((event) => {
     if (timeSlots.has(event.start.toDateString())) {
       const temp = timeSlots.get(event.start.toDateString())!;
-      temp.push([getTimeString(event.start), getTimeString(event.end)]);
+      temp.push([getTimeString(event.start), getTimeString(event.end), event.week]);
       timeSlots.set(event.start.toDateString(), temp);
     } else {
-      timeSlots.set(event.start.toDateString(), [[getTimeString(event.start), getTimeString(event.end)]]);
+      timeSlots.set(event.start.toDateString(), [[getTimeString(event.start), getTimeString(event.end), event.week]]);
     }
   });
-  // console.log(timeSlots);
+  timeSlots.forEach((value, key) => {
+    freeTimeMap.set(key, computeFreeTime(value));
+  });
+
+  const freeTime = [] as string[];
+  freeTimeMap.forEach((value, key) => {
+    value.forEach((slot) => {
+      const startTime = new Date(key + ' ' + slot[0]);
+      const endTime = new Date(key + ' ' + slot[1]);
+      if (slot[2] === weekToTrack) {
+        freeTime.push(startTime.toDateString() + ': ' + slot[0] + ' - ' + slot[1]);
+        sumFreeDurationMinutes += (endTime.getTime() - startTime.getTime()) / 60000;
+      }
+      sum30DayFreeDurationMinutes += (endTime.getTime() - startTime.getTime()) / 60000;
+    });
+  });
 
   const weeklyAvg = sumWeekDurationMinutes / 7;
   const TIMString = Math.floor(weeklyAvg / 60) + 'h ' + Math.round(weeklyAvg % 60) + 'm';
@@ -526,6 +542,7 @@ function buildCardInsights(weeklyData: CalendarEventData[], userEmail: string) {
   timeOutsideMeetings.percentDiff = TFWPercentDiff > 0 ? '+' + TFWPercentDiff.toString() : TFWPercentDiff.toString();
   timeOutsideMeetings.weekTotal = weeklyFreeTimeTotal;
   timeOutsideMeetings.avg = TFWThirtyString;
+  timeOutsideMeetings.timeSlots = freeTime;
 
   return [timeInMeetings, timeOutsideMeetings, clientMeetings];
 }
@@ -541,7 +558,7 @@ const DashboardPage = () => {
     { title: 'Time with Clients', tooltip: 'Shows meeting time', metric: '1h 3m', percentDiff: '-7', avg: '1h 5m', weekTotal: '15h' } as DataCardProps,
   ];
 
-  const [getWeeklyTrends, { loading: weeklyTrendsLoading, error: weeklyTrendsError, data: weeklyTrendsData }] = useGoogleCalendarWeeklyTrendsQueryLazyQuery();
+  const { loading: weeklyTrendsLoading, error: weeklyTrendsError, data: weeklyTrendsData } = useGoogleCalendarWeeklyTrendsQueryQuery();
 
   const [newData, setNewData] = useState(barData);
 
@@ -555,10 +572,7 @@ const DashboardPage = () => {
 
   const [newVsPieData, setNewVsPieData] = useState(pieData);
 
-  const handleButtonClick = () => {
-    getWeeklyTrends();
-    // console.log('weeklyTrendsData', weeklyTrendsData);
-
+  function processData() {
     const dataToChange = weeklyTrendsData?.googleCalendarEvents?.items?.map((event) => {
       return {
         summary: event?.summary?.toString(),
@@ -579,56 +593,57 @@ const DashboardPage = () => {
     const weeklyTrends = buildWeeklyTrendsData(dataToChange!);
 
     const newData = buildBarData(weeklyTrends!);
-    // console.log('Bar Data', newData);
     setNewData(newData);
 
     const newLineData = buildLineData(weeklyTrends!);
-    // console.log('Line Data', newLineData);
     setNewLineData(newLineData);
 
     const newCardInsights = buildCardInsights(weeklyTrends!, user!.email);
-    // console.log('newCardInsights', newCardInsights);
 
     const newCardGridData = [newCardInsights[0], newCardInsights[1], newCardInsights[2]];
     setNewCardInsights(newCardGridData);
 
     const meetingWithAttendeesData = meetingWithAttendeeData(weeklyTrends!, user!.email);
-    // console.log('meetingWithAttendeesData', meetingWithAttendeesData);
 
     const clientPieData = buildClientPieData(meetingWithAttendeesData);
-    // console.log('clientPieData', clientPieData);
     setNewClientPieData(clientPieData);
 
     const teamPieData = buildTeamPieData(meetingWithAttendeesData);
-    // console.log('teamPieData', teamPieData);
     setNewTeamPieData(teamPieData);
 
     const VsPieData = buildVsPieData(meetingWithAttendeesData);
-    // console.log('VsPieData', VsPieData);
     setNewVsPieData(VsPieData);
-  };
+  }
+
+  useEffect(() => {
+    if (!weeklyTrendsLoading && weeklyTrendsData) processData();
+  }, [weeklyTrendsData]);
 
   return (
     <Layout>
       <CardGrid {...newCardInsights} />
-      {/* <DataCard /> */}
-      <Box sx={{ paddingTop: '1rem' }}>
-        <Card sx={{ minWidth: 275 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', paddingRight: '1rem', paddingLeft: '1rem' }}>
-            <Typography sx={{ fontWeight: 'bold', paddingLeft: '4rem' }} variant="h6">
-              This Week&apos;s Meetings by Day
-            </Typography>
-            <Tooltip title="test">
-              <InfoIcon />
-            </Tooltip>
-          </Box>
-          <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '3rem' }}>
-            <div style={{ height: '500px' }}>
-              <charts.BarChart data={newData} />
-            </div>
-          </Box>
-        </Card>
-      </Box>
+      {weeklyTrendsLoading ? (
+        <Skeleton variant="rectangular" width={275} height={500} />
+      ) : (
+        <Box sx={{ paddingTop: '1rem' }}>
+          <Card sx={{ minWidth: 275 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', paddingRight: '1rem', paddingLeft: '1rem' }}>
+              <Typography sx={{ fontWeight: 'bold', paddingLeft: '4rem' }} variant="h6">
+                This Week&apos;s Meetings by Day
+              </Typography>
+              <Tooltip title="test">
+                <InfoIcon />
+              </Tooltip>
+            </Box>
+            <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '3rem' }}>
+              <div style={{ height: '500px' }}>
+                <charts.BarChart data={newData} />
+              </div>
+            </Box>
+          </Card>
+        </Box>
+      )}
+
       {/* <div style={{ height: '300px' }}>
         <charts.CalendarChart data={contributionsData} />
       </div> */}
@@ -643,7 +658,7 @@ const DashboardPage = () => {
             </Tooltip>
           </Box>
           <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '3rem' }}>
-            <div style={{ height: '500px' }}>
+            <div style={{ height: '600px' }}>
               <charts.LineChart data={newLineData} />
             </div>
           </Box>
@@ -707,11 +722,6 @@ const DashboardPage = () => {
           </Grid>
         </Grid>
       </Box>
-      <Tooltip title="Create chart">
-        <Fab onClick={handleButtonClick} aria-label="add chart" color="secondary" sx={{ position: 'absolute', bottom: 32, right: 32 }}>
-          <AddIcon />
-        </Fab>
-      </Tooltip>
     </Layout>
   );
 };

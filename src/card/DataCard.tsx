@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import TextModal from './TextModal';
 import { DataCardProps } from './types/DataCardProps';
 
 // will refactor later
@@ -17,13 +18,25 @@ import { DataCardProps } from './types/DataCardProps';
 export default function DataCard(data: DataCardProps) {
   return (
     <Card sx={{ minWidth: 275 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', paddingRight: '1rem', paddingLeft: '1rem' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingTop: '1rem',
+          paddingRight: '1rem',
+          paddingLeft: '1rem',
+          minHeight: 56,
+        }}>
         <Typography sx={{ fontWeight: 'bold' }} variant="h6">
           {data.title}
         </Typography>
-        <Tooltip title={data.tooltip}>
-          <InfoIcon />
-        </Tooltip>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {typeof data.timeSlots !== 'undefined' && <TextModal {...data.timeSlots} />}
+          <Tooltip title={data.tooltip}>
+            <InfoIcon />
+          </Tooltip>
+        </Box>
       </Box>
       <CardContent>
         <Typography sx={{ marginRight: '0.25em', fontWeight: 'bolder' }} display="inline" variant="h4">

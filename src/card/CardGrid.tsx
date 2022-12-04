@@ -14,7 +14,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 // make dynamic to number of cards' data provided in props
-export default function CardGrid(cardData: DataCardProps[]) {
+export default function CardGrid(cardData: DataCardProps[], extraData: string[][]) {
   // const firstDataCardProps = {
   //   // make sure all required component's inputs/Props keys&types match
   //   title: cardData[0].title,
