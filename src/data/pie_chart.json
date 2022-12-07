@@ -1,4 +1,8 @@
 {
+  "chartType": "Pie",
+  "x_axis": "date",
+  "y_axis": "hours",
+  "seriesType": "single",
   "data": [
     {
       "id": "hack",

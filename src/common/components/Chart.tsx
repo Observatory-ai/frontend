@@ -1,8 +1,11 @@
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveCalendar } from '@nivo/calendar';
+import { useOrdinalColorScale } from '@nivo/colors';
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsivePie } from '@nivo/pie';
+import { ResponsiveRadar } from '@nivo/radar';
 import { ResponsiveScatterPlot } from '@nivo/scatterplot';
+import { useMemo, useState } from 'react';
 
 type ChartProps = {
   data: any;
@@ -20,6 +23,8 @@ export function returnChart(chartType: string, data: ChartProps) {
       return <PieChart data={data} />;
     case 'Scatter':
       return <ScatterPlotChart data={data} />;
+    case 'Radar':
+      return <RadarChart data={data} />;
     default:
       return <BarChart data={data} />;
   }
@@ -113,70 +118,91 @@ export const CalendarChart = ({ data }: ChartProps) => (
   />
 );
 
-export const LineChart = ({ data }: ChartProps) => (
-  <ResponsiveLine
-    data={data.data}
-    curve="monotoneX"
-    margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-    xScale={{ type: 'point' }}
-    yScale={{
-      type: 'linear',
-      min: 'auto',
-      max: 'auto',
-      stacked: false,
-      reverse: false,
-    }}
-    yFormat=" >-.2f"
-    axisBottom={{
-      tickSize: 5,
-      tickPadding: 5,
-      tickRotation: 0,
-      legend: data.x_axis,
-      legendOffset: 36,
-      legendPosition: 'middle',
-    }}
-    axisLeft={{
-      tickSize: 5,
-      tickPadding: 5,
-      tickRotation: 0,
-      legend: data.y_axis,
-      legendOffset: -40,
-      legendPosition: 'middle',
-    }}
-    pointSize={10}
-    pointColor={{ theme: 'background' }}
-    pointBorderWidth={2}
-    pointBorderColor={{ from: 'serieColor' }}
-    pointLabelYOffset={-12}
-    useMesh={true}
-    legends={[
-      {
-        anchor: 'top-right',
-        direction: 'column',
-        justify: false,
-        translateX: 100,
-        translateY: 0,
-        itemsSpacing: 0,
-        itemDirection: 'left-to-right',
-        itemWidth: 200,
-        itemHeight: 20,
-        itemOpacity: 0.95,
-        symbolSize: 12,
-        symbolShape: 'circle',
-        symbolBorderColor: 'rgba(0, 0, 0, .5)',
-        effects: [
-          {
-            on: 'hover',
-            style: {
-              itemBackground: 'rgba(0, 0, 0, .03)',
-              itemOpacity: 1,
+export function LineChart({ data }: ChartProps) {
+  const [hiddenIds, setHiddenIds] = useState<string[]>([]);
+
+  const newData = useMemo(() => data.data.filter((item: any) => !hiddenIds.includes(item.id)), [hiddenIds, data.data]);
+
+  const colors = useOrdinalColorScale({ scheme: 'nivo' }, 'id');
+
+  return (
+    <ResponsiveLine
+      data={newData}
+      curve="monotoneX"
+      colors={colors}
+      margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+      xScale={{ type: 'point' }}
+      yScale={{
+        type: 'linear',
+        min: 'auto',
+        max: 'auto',
+        stacked: false,
+        reverse: false,
+      }}
+      yFormat=" >-.2f"
+      legends={[
+        {
+          anchor: 'top-right',
+          direction: 'column',
+          justify: false,
+          translateX: 100,
+          translateY: 0,
+          itemsSpacing: 0,
+          itemDirection: 'left-to-right',
+          itemWidth: 200,
+          itemHeight: 20,
+          itemOpacity: 0.95,
+          symbolSize: 12,
+          symbolShape: 'circle',
+          symbolBorderColor: 'rgba(0, 0, 0, .5)',
+          effects: [
+            {
+              on: 'hover',
+              style: {
+                itemBackground: 'rgba(0, 0, 0, .03)',
+                itemOpacity: 1,
+              },
             },
+          ],
+          data: data.data.map((item: any) => {
+            const color = colors(item);
+
+            return {
+              color: hiddenIds.includes(item.id) ? 'rgba(1, 1, 1, .1)' : color,
+              id: item.id,
+              label: item.id,
+            };
+          }),
+          onClick: (datum) => {
+            setHiddenIds((state) => (state.includes(String(datum.id)) ? state.filter((item) => item !== datum.id) : [...state, String(datum.id)]));
           },
-        ],
-      },
-    ]}
-  />
-);
+        },
+      ]}
+      axisBottom={{
+        tickSize: 5,
+        tickPadding: 5,
+        tickRotation: 0,
+        legend: data.x_axis,
+        legendOffset: 36,
+        legendPosition: 'middle',
+      }}
+      axisLeft={{
+        tickSize: 5,
+        tickPadding: 5,
+        tickRotation: 0,
+        legend: data.y_axis,
+        legendOffset: -40,
+        legendPosition: 'middle',
+      }}
+      pointSize={10}
+      pointColor={{ theme: 'background' }}
+      pointBorderWidth={2}
+      pointBorderColor={{ from: 'serieColor' }}
+      pointLabelYOffset={-12}
+      useMesh={true}
+    />
+  );
+}
 
 export const PieChart = ({ data }: ChartProps) => (
   <ResponsivePie
@@ -273,6 +299,45 @@ export const ScatterPlotChart = ({ data }: ChartProps) => (
             on: 'hover',
             style: {
               itemOpacity: 1,
+            },
+          },
+        ],
+      },
+    ]}
+  />
+);
+
+export const RadarChart = ({ data }: ChartProps) => (
+  <ResponsiveRadar
+    data={data.data}
+    keys={[data.y_axis]}
+    indexBy={data.x_axis}
+    valueFormat=">-.2f"
+    margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
+    borderColor={{ from: 'color' }}
+    gridLabelOffset={36}
+    dotSize={10}
+    dotColor={{ theme: 'background' }}
+    dotBorderWidth={2}
+    colors={{ scheme: 'nivo' }}
+    blendMode="multiply"
+    motionConfig="wobbly"
+    legends={[
+      {
+        anchor: 'top-left',
+        direction: 'column',
+        translateX: -50,
+        translateY: -40,
+        itemWidth: 80,
+        itemHeight: 20,
+        itemTextColor: '#999',
+        symbolSize: 12,
+        symbolShape: 'circle',
+        effects: [
+          {
+            on: 'hover',
+            style: {
+              itemTextColor: '#000',
             },
           },
         ],

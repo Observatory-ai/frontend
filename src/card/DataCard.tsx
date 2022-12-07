@@ -4,7 +4,11 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import TextModal from './TextModal';
 import { DataCardProps } from './types/DataCardProps';
+
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
 // will refactor later
 
@@ -17,13 +21,25 @@ import { DataCardProps } from './types/DataCardProps';
 export default function DataCard(data: DataCardProps) {
   return (
     <Card sx={{ minWidth: 275 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', paddingRight: '1rem', paddingLeft: '1rem' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingTop: '1rem',
+          paddingRight: '1rem',
+          paddingLeft: '1rem',
+          minHeight: 56,
+        }}>
         <Typography sx={{ fontWeight: 'bold' }} variant="h6">
           {data.title}
         </Typography>
-        <Tooltip title={data.tooltip}>
-          <InfoIcon />
-        </Tooltip>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {typeof data.timeSlots !== 'undefined' && <TextModal {...data.timeSlots} />}
+          <Tooltip title={data.tooltip}>
+            <InfoIcon />
+          </Tooltip>
+        </Box>
       </Box>
       <CardContent>
         <Typography sx={{ marginRight: '0.25em', fontWeight: 'bolder' }} display="inline" variant="h4">
@@ -32,7 +48,12 @@ export default function DataCard(data: DataCardProps) {
         <Typography variant="body1" display="inline" gutterBottom>
           per day
         </Typography>
-        <Typography sx={{ fontWeight: 'bold', mb: 1.5 }} variant="subtitle1" component="div">
+        <Typography sx={{ display: 'flex', fontWeight: 'bold', mb: 1.5 }} variant="subtitle1" component="div">
+          {parseInt(data.percentDiff) >= 0 ? (
+            <ArrowCircleUpIcon sx={{ color: '#de7526', marginRight: 0.1 }} />
+          ) : (
+            <ArrowCircleDownIcon sx={{ color: '#de7526', marginRight: 0.1 }} />
+          )}
           {data.percentDiff}% vs. 30-day avg
         </Typography>
         <Typography sx={{ marginRight: '0.25em', fontSize: '16px' }} display="inline" variant="body2">

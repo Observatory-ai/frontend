@@ -5,4 +5,5 @@ export interface DataCardProps {
   percentDiff: string;
   avg: string;
   weekTotal: string;
+  timeSlots: string[];
 }

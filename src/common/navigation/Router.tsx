@@ -7,7 +7,7 @@ import DashboardPage from '../../dashboard/components/DashboardPage';
 const Router = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/create-chart" element={<CreateChartPage />} />
+      <Route path="/edit-chart" element={<CreateChartPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
