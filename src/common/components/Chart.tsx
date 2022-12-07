@@ -3,6 +3,7 @@ import { ResponsiveCalendar } from '@nivo/calendar';
 import { useOrdinalColorScale } from '@nivo/colors';
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsivePie } from '@nivo/pie';
+import { ResponsiveRadar } from '@nivo/radar';
 import { ResponsiveScatterPlot } from '@nivo/scatterplot';
 import { useMemo, useState } from 'react';
 
@@ -22,6 +23,8 @@ export function returnChart(chartType: string, data: ChartProps) {
       return <PieChart data={data} />;
     case 'Scatter':
       return <ScatterPlotChart data={data} />;
+    case 'Radar':
+      return <RadarChart data={data} />;
     default:
       return <BarChart data={data} />;
   }
@@ -296,6 +299,45 @@ export const ScatterPlotChart = ({ data }: ChartProps) => (
             on: 'hover',
             style: {
               itemOpacity: 1,
+            },
+          },
+        ],
+      },
+    ]}
+  />
+);
+
+export const RadarChart = ({ data }: ChartProps) => (
+  <ResponsiveRadar
+    data={data.data}
+    keys={[data.y_axis]}
+    indexBy={data.x_axis}
+    valueFormat=">-.2f"
+    margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
+    borderColor={{ from: 'color' }}
+    gridLabelOffset={36}
+    dotSize={10}
+    dotColor={{ theme: 'background' }}
+    dotBorderWidth={2}
+    colors={{ scheme: 'nivo' }}
+    blendMode="multiply"
+    motionConfig="wobbly"
+    legends={[
+      {
+        anchor: 'top-left',
+        direction: 'column',
+        translateX: -50,
+        translateY: -40,
+        itemWidth: 80,
+        itemHeight: 20,
+        itemTextColor: '#999',
+        symbolSize: 12,
+        symbolShape: 'circle',
+        effects: [
+          {
+            on: 'hover',
+            style: {
+              itemTextColor: '#000',
             },
           },
         ],

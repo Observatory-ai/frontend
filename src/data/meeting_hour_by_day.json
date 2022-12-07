@@ -2,6 +2,7 @@
   "chartType": "Bar",
   "x_axis": "date",
   "y_axis": "hours",
+  "seriesType": "single",
   "data": [
     {
       "date": "Monday",

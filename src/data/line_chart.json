@@ -2,6 +2,7 @@
   "chartType": "Line",
   "y_axis": "hours",
   "x_axis": "date",
+  "seriesType": "multiple",
   "data": [
     {
       "id": "Week 1",

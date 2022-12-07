@@ -1,85 +1,92 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Container, TextField, useTheme } from '@mui/material';
+import { Box, Container, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
-import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { chartFormSchema } from '../schemas/chartFormSchema';
-import { ChartFormValues } from '../types/chartFormValues';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { returnChart } from '../../common/components/Chart';
 import { chartToBuild } from '../conversion/chartFunctions';
 
 type ChartProps = {
   chart_data: any;
+  chartNo: string;
+  stateObject: Map<string, any>;
 };
 
-export default function CreateChartForm({ chart_data }: ChartProps) {
+export default function CreateChartForm({ chart_data, chartNo, stateObject }: ChartProps) {
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState } = useForm<ChartFormValues>({
-    defaultValues: { chartType: '', x_axis: '', y_axis: '' },
-    resolver: yupResolver(chartFormSchema),
-  });
-
   const [newData, setNewData] = useState(chart_data);
+  const [newStateObject, setNewStateObject] = useState(stateObject);
 
-  const { isSubmitting, errors } = formState;
-  const onSubmit = (data: ChartFormValues) => {
-    console.log(data);
-    const new_data = chartToBuild(data, newData)!;
-    console.log(new_data);
+  const updateGraph = () => {
+    const new_data = chartToBuild({ chartType: chartTypeToBuild }, newData)!;
     setNewData(new_data);
+    const tempStateObject = newStateObject;
+    tempStateObject.set(chartNo, new_data);
+    setNewStateObject(tempStateObject);
   };
 
+  const [chartTypeToBuild, setChartToBuild] = React.useState(chart_data.chartType);
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setChartToBuild(event.target.value as string);
+  };
+
+  function returnMenuItems() {
+    if (chart_data.seriesType === 'single') {
+      return [
+        <MenuItem key="1" value="Bar">
+          Bar
+        </MenuItem>,
+        <MenuItem key="2" value="Line">
+          Line
+        </MenuItem>,
+        <MenuItem key="3" value="Pie">
+          Pie
+        </MenuItem>,
+        <MenuItem key="4" value="Radar">
+          Radar
+        </MenuItem>,
+      ];
+    } else if (chart_data.seriesType === 'multiple') {
+      return [
+        <MenuItem key="1" value="Bar">
+          Bar
+        </MenuItem>,
+        <MenuItem key="2" value="Line">
+          Line
+        </MenuItem>,
+        <MenuItem key="4" value="Radar">
+          Radar
+        </MenuItem>,
+      ];
+    }
+  }
+
   return (
-    <Container maxWidth="xs">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
-          required
-          autoFocus
-          variant="outlined"
-          margin="dense"
-          label="Chart Type"
-          type="text"
-          fullWidth
-          placeholder="Chart Type"
-          {...register('chartType')}
-          error={!!errors.chartType}
-          helperText={errors.chartType ? errors.chartType.message : null}
-        />
-        <TextField
-          required
-          variant="outlined"
-          margin="dense"
-          label="x-axis"
-          type={'text'}
-          fullWidth
-          placeholder="x_axis"
-          {...register('x_axis')}
-          error={!!errors.x_axis}
-          helperText={errors.x_axis ? errors.x_axis.message : null}
-        />
-        <TextField
-          required
-          variant="outlined"
-          margin="dense"
-          label="y-axis"
-          type={'text'}
-          fullWidth
-          placeholder="y_axis"
-          {...register('y_axis')}
-          error={!!errors.y_axis}
-          helperText={errors.y_axis ? errors.y_axis.message : null}
-        />
-        <Button type="submit" fullWidth disabled={isSubmitting} variant="contained">
-          {t('button.submit', { ns: 'common' })}
+    <Container maxWidth="xs" sx={{ minWidth: '700px' }}>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Select Chart Type</InputLabel>
+        <Select labelId="demo-simple-select-label" id="demo-simple-select" value={chartTypeToBuild} label="Select Chart Type" onChange={handleChange}>
+          {returnMenuItems()}
+        </Select>
+      </FormControl>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Button type="submit" onClick={updateGraph} variant="contained" sx={{ margin: '1rem' }}>
+          {'Update'}
         </Button>
-      </form>
-      <div style={{ height: '500px', width: '500px' }}>{returnChart(newData.chartType, newData)}</div>
+        <Link to={{ pathname: '/dashboard' }} state={{ data: newData, editedChart: chartNo, stateObject: newStateObject }} style={{ textDecoration: 'none' }}>
+          <Button sx={{ margin: '1rem' }} variant="contained">
+            {'Save'}
+          </Button>
+        </Link>
+      </Box>
+      <Box sx={{ alignItems: 'center', paddingLeft: '1rem' }}>
+        <div style={{ height: '600px', width: '700px' }}>{returnChart(newData.chartType, newData)}</div>
+      </Box>
     </Container>
   );
 }
