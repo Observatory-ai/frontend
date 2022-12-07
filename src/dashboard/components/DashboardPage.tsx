@@ -568,7 +568,7 @@ function buildCardInsights(weeklyData: CalendarEventData[], userEmail: string) {
   clientMeetings.avg = TCMThirtyString;
 
   timeOutsideMeetings.title = 'Time Outside Meetings';
-  timeOutsideMeetings.tooltip = 'Average time spent outside of meetings per day';
+  timeOutsideMeetings.tooltip = 'Average time spent outside of meetings per day within work hours';
   timeOutsideMeetings.metric = TFWString;
   timeOutsideMeetings.percentDiff = TFWPercentDiff > 0 ? '+' + TFWPercentDiff.toString() : TFWPercentDiff.toString();
   timeOutsideMeetings.weekTotal = weeklyFreeTimeTotal;
@@ -715,7 +715,7 @@ const DashboardPage = () => {
       {weeklyTrendsLoading ? (
         <Skeleton variant="rectangular" height={200} sx={{ marginTop: '1rem' }} />
       ) : (
-        <Box sx={{ paddingTop: '1rem', flexGrow: 1 }}>
+        <Box sx={{ paddingTop: '1rem', paddingBottom: '1rem', flexGrow: 1 }}>
           <Grid container spacing={2}>
             <Grid item xs={4}>
               <Card sx={{ minWidth: 275 }}>
@@ -732,7 +732,7 @@ const DashboardPage = () => {
                     Client vs. Team Meetings
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('6'), chartNo: '6', stateObject }}>
+                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('6'), chartNo: '6', stateObject: newStateObject }}>
                       <IconButton aria-label="add chart">
                         <EditIcon />
                       </IconButton>
@@ -762,7 +762,7 @@ const DashboardPage = () => {
                     Time Spent with Clients
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('7'), chartNo: '7', stateObject }}>
+                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('7'), chartNo: '7', stateObject: newStateObject }}>
                       <IconButton aria-label="add chart">
                         <EditIcon />
                       </IconButton>
@@ -792,7 +792,7 @@ const DashboardPage = () => {
                     Time Spent with Team
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('8'), chartNo: '8', stateObject }}>
+                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('8'), chartNo: '8', stateObject: newStateObject }}>
                       <IconButton aria-label="add chart">
                         <EditIcon />
                       </IconButton>
