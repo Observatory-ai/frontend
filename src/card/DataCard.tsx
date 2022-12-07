@@ -7,6 +7,9 @@ import Typography from '@mui/material/Typography';
 import TextModal from './TextModal';
 import { DataCardProps } from './types/DataCardProps';
 
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+
 // will refactor later
 
 // const bull = (
@@ -45,7 +48,12 @@ export default function DataCard(data: DataCardProps) {
         <Typography variant="body1" display="inline" gutterBottom>
           per day
         </Typography>
-        <Typography sx={{ fontWeight: 'bold', mb: 1.5 }} variant="subtitle1" component="div">
+        <Typography sx={{ display: 'flex', fontWeight: 'bold', mb: 1.5 }} variant="subtitle1" component="div">
+          {parseInt(data.percentDiff) >= 0 ? (
+            <ArrowCircleUpIcon sx={{ color: '#de7526', marginRight: 0.1 }} />
+          ) : (
+            <ArrowCircleDownIcon sx={{ color: '#de7526', marginRight: 0.1 }} />
+          )}
           {data.percentDiff}% vs. 30-day avg
         </Typography>
         <Typography sx={{ marginRight: '0.25em', fontSize: '16px' }} display="inline" variant="body2">
