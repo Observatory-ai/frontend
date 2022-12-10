@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
 import { Box, Card, Grid, IconButton, Skeleton, Tooltip, Typography } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../authentication/contexts/AuthContext';
 import CardGrid from '../../card/CardGrid';
@@ -13,8 +14,6 @@ import lineData from '../../data/line_chart.json';
 import barData from '../../data/meeting_hour_by_day.json';
 import pieData from '../../data/pie_chart.json';
 import { useGoogleCalendarWeeklyTrendsQueryQuery } from '../../generated/graphql';
-
-import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -28,6 +27,8 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 //   { i: '7', x: 1, y: 3, w: 1, h: 1 },
 //   { i: '8', x: 2, y: 0, w: 1, h: 1 },
 // ];
+
+// need to split code into smaller components
 
 interface GoogleCalendarData {
   summary: string;
