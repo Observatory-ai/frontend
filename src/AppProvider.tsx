@@ -8,8 +8,7 @@ type AppProviderProps = {
 };
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch } = useContext(AuthContext);
-  const hasuraURI = process.env.REACT_APP_HASURA as string;
-  const adminSecret = process.env.REACT_APP_ADMIN_SECRET as string;
+  const graphqlURI = process.env.REACT_APP_GRAPHQL as string;
   const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     // need to handle unauthorized error
     // checkout retry link
@@ -34,15 +33,15 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         headers: {
           ...headers,
           authorization: accessToken ? `Bearer ${accessToken}` : '',
-          'x-hasura-admin-secret': adminSecret, // switch to .env variable
         },
       };
     });
     return forward(operation).map((result: any) => {
+      console.log(result);
       const login = result.data?.login;
       const register = result.data?.register;
       const refreshTokens = result.data?.refreshTokens;
-      const googleAuth = result.data?.googleAuth;
+      const googleAuth = result.data?.authenticateWithGoogle;
       const logout = result.data?.logout;
 
       if (login) {
@@ -78,15 +77,15 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     });
   });
 
-  const hasuraLink = new HttpLink({
+  const graphqlLink = new HttpLink({
     credentials: 'include', // same-origin (same domains)
-    uri: hasuraURI,
+    uri: graphqlURI,
   });
 
   const createApolloClient = () => {
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: ApolloLink.from([authLink, errorLink as unknown as ApolloLink, hasuraLink]),
+      link: ApolloLink.from([authLink, errorLink as unknown as ApolloLink, graphqlLink]),
       connectToDevTools: true,
     });
   };

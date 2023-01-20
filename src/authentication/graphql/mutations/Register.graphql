@@ -1,5 +1,5 @@
-mutation Register($registerInput: RegisterInput!) {
-  register(registerInput: $registerInput) {
+mutation Register($signUpInput: SignUpDto!) {
+  register(SignUpInput: $signUpInput) {
     accessToken
     email
     username

@@ -1,5 +1,5 @@
-mutation GoogleAuth($googleAuthInput: GoogleAuthInput!) {
-  googleAuth(googleAuthInput: $googleAuthInput) {
+mutation GoogleAuth($googleAuthInput: GoogleAuthDto!) {
+  authenticateWithGoogle(GoogleAuthInput: $googleAuthInput) {
     accessToken
     email
     username

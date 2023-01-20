@@ -124,44 +124,44 @@ function buildWeeklyTrendsData(data: GoogleCalendarData[]) {
   const endOfTheWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
 
   const weeklyTrendsData: CalendarEventData[] = [];
+  data &&
+    data.forEach((event) => {
+      if (typeof event.start.dateTime !== 'undefined') {
+        const today = new Date();
+        const last30Date = new Date(new Date().setDate(today.getDate() - 30));
 
-  data.forEach((event) => {
-    if (typeof event.start.dateTime !== 'undefined') {
-      const today = new Date();
-      const last30Date = new Date(new Date().setDate(today.getDate() - 30));
+        const startDate = new Date(event.start.dateTime);
+        if (startDate > last30Date) {
+          const endDate = new Date(event.end.dateTime);
+          const durationHours = (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
+          const durationMinutes = (endDate.getTime() - startDate.getTime()) / 1000 / 60;
 
-      const startDate = new Date(event.start.dateTime);
-      if (startDate > last30Date) {
-        const endDate = new Date(event.end.dateTime);
-        const durationHours = (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
-        const durationMinutes = (endDate.getTime() - startDate.getTime()) / 1000 / 60;
+          const eventDate = new Date(event.start.dateTime);
+          const lastSunday = new Date(eventDate.setDate(eventDate.getDate() - eventDate.getDay()));
+          const upcomingSaturday = new Date(eventDate.setDate(eventDate.getDate() - eventDate.getDay() + 6));
+          const dSunday = new String(lastSunday.getDate()).padStart(2, '0');
+          const mSunday = String(lastSunday.getMonth() + 1).padStart(2, '0'); //January is 0!
+          const ySunday = lastSunday.getFullYear();
 
-        const eventDate = new Date(event.start.dateTime);
-        const lastSunday = new Date(eventDate.setDate(eventDate.getDate() - eventDate.getDay()));
-        const upcomingSaturday = new Date(eventDate.setDate(eventDate.getDate() - eventDate.getDay() + 6));
-        const dSunday = new String(lastSunday.getDate()).padStart(2, '0');
-        const mSunday = String(lastSunday.getMonth() + 1).padStart(2, '0'); //January is 0!
-        const ySunday = lastSunday.getFullYear();
+          const dSaturday = new String(upcomingSaturday.getDate()).padStart(2, '0');
+          const mSaturday = String(upcomingSaturday.getMonth() + 1).padStart(2, '0');
+          const ySaturday = upcomingSaturday.getFullYear();
 
-        const dSaturday = new String(upcomingSaturday.getDate()).padStart(2, '0');
-        const mSaturday = String(upcomingSaturday.getMonth() + 1).padStart(2, '0');
-        const ySaturday = upcomingSaturday.getFullYear();
+          const week = 'Week: ' + ySunday + '-' + mSunday + '-' + dSunday + ' to ' + ySaturday + '-' + mSaturday + '-' + dSaturday;
 
-        const week = 'Week: ' + ySunday + '-' + mSunday + '-' + dSunday + ' to ' + ySaturday + '-' + mSaturday + '-' + dSaturday;
-
-        weeklyTrendsData.push({
-          week: week,
-          weekDay: startDate.toLocaleDateString('en-US', { weekday: 'long' }),
-          start: startDate,
-          end: endDate,
-          durationHours: durationHours,
-          durationMinutes: durationMinutes,
-          summary: event.summary,
-          attendees: event.attendees,
-        });
+          weeklyTrendsData.push({
+            week: week,
+            weekDay: startDate.toLocaleDateString('en-US', { weekday: 'long' }),
+            start: startDate,
+            end: endDate,
+            durationHours: durationHours,
+            durationMinutes: durationMinutes,
+            summary: event.summary,
+            attendees: event.attendees,
+          });
+        }
       }
-    }
-  });
+    });
 
   return weeklyTrendsData;
 }
@@ -606,22 +606,25 @@ const DashboardPage = () => {
   const [newStateObject, setNewStateObject] = useState(initialStateObject);
 
   function processData() {
-    const dataToChange = weeklyTrendsData?.googleCalendarEvents?.items?.map((event) => {
-      return {
-        summary: event?.summary?.toString(),
-        start: { dateTime: event?.start?.dateTime?.toString(), timeZone: event?.start?.timeZone?.toString() },
-        end: { dateTime: event?.end?.dateTime?.toString(), timeZone: event?.end?.timeZone?.toString() },
-        organizer: { email: event?.organizer?.email?.toString() },
-        attendees: event?.attendees?.map((attendee) => {
-          return {
-            email: attendee?.email?.toString(),
-            displayName: attendee?.displayName?.toString(),
-            organizer: attendee?.organizer,
-            self: attendee?.self,
-          } as GoogleCalendarAttendee;
-        }, []),
-      } as GoogleCalendarData;
-    });
+    let dataToChange: GoogleCalendarData[] = [];
+    if (weeklyTrendsData) {
+      dataToChange = weeklyTrendsData?.googleCalendarEvents?.items?.map((event) => {
+        return {
+          summary: event?.summary?.toString(),
+          start: { dateTime: event?.start?.dateTime?.toString(), timeZone: event?.start?.timeZone?.toString() },
+          end: { dateTime: event?.end?.dateTime?.toString(), timeZone: event?.end?.timeZone?.toString() },
+          organizer: { email: event?.organizer?.email?.toString() },
+          attendees: event?.attendees?.map((attendee) => {
+            return {
+              email: attendee?.email?.toString(),
+              displayName: attendee?.displayName?.toString(),
+              organizer: attendee?.organizer,
+              self: attendee?.self,
+            } as GoogleCalendarAttendee;
+          }, []),
+        } as GoogleCalendarData;
+      });
+    }
 
     const weeklyTrends = buildWeeklyTrendsData(dataToChange!);
 

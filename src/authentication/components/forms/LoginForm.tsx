@@ -40,7 +40,7 @@ export default function LoginForm() {
   const onSubmit = async (formValues: LoginFormValues) => {
     const { usernameOrEmail, password } = formValues;
     try {
-      await login({ variables: { loginInput: { emailOrUsername: usernameOrEmail, password } } });
+      await login({ variables: { signInInput: { emailOrUsername: usernameOrEmail, password } } });
       navigate('/dashboard');
     } catch (e: any) {
       // setError('usernameOrEmail', { type: 'custom', message: e.message });

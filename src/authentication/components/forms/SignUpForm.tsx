@@ -38,7 +38,7 @@ const SignUpForm = () => {
 
   const onSubmit = async (formValues: SignUpFormValues) => {
     const { firstName, lastName, email, username, password, confirmPassword } = formValues;
-    await registerMutation({ variables: { registerInput: { email, firstName, lastName, username, password, confirmPassword } } });
+    await registerMutation({ variables: { signUpInput: { email, firstName, lastName, username, password, confirmPassword } } });
     navigate('/dashboard');
   };
 
