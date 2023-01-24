@@ -4,7 +4,7 @@ import Layout from '../../common/layout/Layout';
 import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
 import { Box, Card, Grid, IconButton, Skeleton, Tooltip, Typography } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../authentication/contexts/AuthContext';
@@ -606,7 +606,7 @@ const DashboardPage = () => {
   const [newStateObject, setNewStateObject] = useState(initialStateObject);
 
   function processData() {
-    let dataToChange: GoogleCalendarData[] = [];
+    let dataToChange: GoogleCalendarData[] | undefined = [];
     if (weeklyTrendsData) {
       dataToChange = weeklyTrendsData?.googleCalendarEvents?.items?.map((event) => {
         return {
@@ -657,9 +657,9 @@ const DashboardPage = () => {
     }
   }
 
-  // useEffect(() => {
-  //   if (!weeklyTrendsLoading && weeklyTrendsData) processData();
-  // }, [weeklyTrendsData]);
+  useEffect(() => {
+    if (!weeklyTrendsLoading && weeklyTrendsData) processData();
+  }, [weeklyTrendsData]);
 
   return (
     <Layout>

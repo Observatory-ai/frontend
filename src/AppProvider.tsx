@@ -38,6 +38,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const authLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers }: { headers: Headers }) => {
+      // TODO: find a way to pull this token from memory instead of local storage
+      // Example: apollo cache, context, etc.
       const accessToken = localStorage.getItem('accessToken');
       return {
         headers: {
@@ -79,11 +81,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
           localStorage.setItem('accessToken', accessToken);
           dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
         }
-
-        // if (currentUser) {
-        //   const { email, username, uuid, avatar } = currentUser;
-        //   dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
-        // }
 
         if (logout) {
           localStorage.removeItem('accessToken');
