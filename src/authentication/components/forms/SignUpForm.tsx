@@ -3,7 +3,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link as MuiLink, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -54,10 +54,6 @@ const SignUpForm = () => {
   const loginWithGoogle = useGoogleLogin({
     onSuccess: onGoogleAuthSuccess,
   });
-
-  useEffect(() => {
-    console.log(typeof error, error);
-  }, [error]);
 
   return (
     <Container component="main" maxWidth="xs">

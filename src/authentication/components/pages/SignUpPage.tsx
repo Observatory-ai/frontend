@@ -2,7 +2,7 @@ import { Box, CircularProgress, Container } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRefreshTokensMutation } from '../../../generated/graphql';
-import { AuthContext, AuthReducerAction } from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import SignUpForm from '../forms/SignUpForm';
 
 function SignupPage() {
@@ -12,18 +12,10 @@ function SignupPage() {
 
   useEffect(() => {
     const fetchRefreshTokens = async () => {
-      try {
-        await refreshTokens();
-        navigate('/dashboard');
-      } catch (e) {
-        localStorage.removeItem('accessToken');
-        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
-      }
+      await refreshTokens();
+      navigate('/dashboard');
     };
-    const accessToken = localStorage.getItem('accessToken');
-    if (!user || !accessToken) {
-      fetchRefreshTokens();
-    }
+    fetchRefreshTokens();
   }, []);
 
   return (

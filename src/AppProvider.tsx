@@ -2,6 +2,7 @@ import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } fro
 import { onError } from 'apollo-link-error';
 import { useContext } from 'react';
 import { AuthContext, AuthReducerAction } from './authentication/contexts/AuthContext';
+import { RefreshTokensDocument } from './generated/graphql';
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -9,21 +10,30 @@ type AppProviderProps = {
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch } = useContext(AuthContext);
   const graphqlURI = process.env.REACT_APP_GRAPHQL as string;
-  const errorLink = onError(({ graphQLErrors, networkError, response }) => {
-    // need to handle unauthorized error
-    // checkout retry link
-    // if (networkError) {
-    //   console.log(`[Network error]: ${networkError}`);
-    // }
-    // if (graphQLErrors) {
-    //   const errors = graphQLErrors.map((error) => {
-    //     const parsedMessage = JSON.parse(error.message);
-    //     return { extensions: error.extensions, message: parsedMessage };
-    //   }) as GraphQLError[];
-    //   if (response) {
-    //     response.errors = errors;
-    //   }
-    // }
+
+  const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+    if (graphQLErrors) {
+      for (const err of graphQLErrors) {
+        switch (err.extensions.code) {
+          case 'UNAUTHENTICATED': {
+            if (operation.operationName === 'RefreshTokens') return;
+
+            refreshToken().then((data) => {
+              const oldHeaders = operation.getContext().headers;
+              operation.setContext({
+                headers: {
+                  ...oldHeaders,
+                  authorization: data ? `Bearer ${data}` : '',
+                },
+              });
+            });
+            return forward(operation);
+          }
+        }
+      }
+    }
+
+    if (networkError) console.log(`[Network error]: ${networkError}`);
   });
 
   const authLink = new ApolloLink((operation, forward) => {
@@ -36,59 +46,82 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         },
       };
     });
-    return forward(operation).map((result: any) => {
-      console.log(result);
-      const login = result.data?.login;
-      const register = result.data?.register;
-      const refreshTokens = result.data?.refreshTokens;
-      const googleAuth = result.data?.authenticateWithGoogle;
-      const logout = result.data?.logout;
+    return forward(operation).map(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (result: any) => {
+        const login = result.data?.login;
+        const register = result.data?.register;
+        const refreshTokens = result.data?.refreshTokens;
+        const googleAuth = result.data?.authenticateWithGoogle;
+        const logout = result.data?.logout;
+        const currentUser = result.data?.currentUser;
 
-      if (login) {
-        const { accessToken, email, username, uuid, avatar } = login;
-        localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+        if (login) {
+          const { accessToken, email, username, uuid, avatar } = login;
+          localStorage.setItem('accessToken', accessToken);
+          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+        }
+
+        if (register) {
+          const { accessToken, email, username, uuid, avatar } = register;
+          localStorage.setItem('accessToken', accessToken);
+          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+        }
+
+        if (refreshTokens) {
+          const { accessToken, email, username, uuid, avatar } = refreshTokens;
+          localStorage.setItem('accessToken', accessToken);
+          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+        }
+
+        if (googleAuth) {
+          const { accessToken, email, username, uuid, avatar } = googleAuth;
+          localStorage.setItem('accessToken', accessToken);
+          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+        }
+
+        // if (currentUser) {
+        //   const { email, username, uuid, avatar } = currentUser;
+        //   dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+        // }
+
+        if (logout) {
+          localStorage.removeItem('accessToken');
+          dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
+          client.resetStore();
+        }
+
+        return result;
       }
-
-      if (register) {
-        const { accessToken, email, username, uuid, avatar } = register;
-        localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
-      }
-
-      if (refreshTokens) {
-        const { accessToken, email, username, uuid, avatar } = refreshTokens;
-        localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
-      }
-
-      if (googleAuth) {
-        const { accessToken, email, username, uuid, avatar } = googleAuth;
-        localStorage.setItem('accessToken', accessToken);
-        dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
-      }
-
-      if (logout) {
-        localStorage.removeItem('accessToken');
-        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
-      }
-
-      return result;
-    });
+    );
   });
 
-  const graphqlLink = new HttpLink({
+  const httpLink = new HttpLink({
     credentials: 'include', // same-origin (same domains)
     uri: graphqlURI,
   });
 
-  const createApolloClient = () => {
-    return new ApolloClient({
-      cache: new InMemoryCache(),
-      link: ApolloLink.from([authLink, errorLink as unknown as ApolloLink, graphqlLink]),
-      connectToDevTools: true,
-    });
+  const client = new ApolloClient({
+    link: ApolloLink.from([errorLink as unknown as ApolloLink, authLink, httpLink]),
+    cache: new InMemoryCache(),
+    connectToDevTools: true,
+  });
+
+  const refreshToken = async () => {
+    try {
+      const refreshTokensResponse = await client.mutate<{
+        refreshTokens: { accessToken: string };
+      }>({
+        mutation: RefreshTokensDocument,
+      });
+      const accessToken = refreshTokensResponse.data?.refreshTokens.accessToken;
+      return accessToken;
+    } catch (err) {
+      localStorage.removeItem('accessToken');
+      window.location.href = '/login';
+      throw err;
+    }
   };
 
-  return <ApolloProvider client={createApolloClient()}>{children}</ApolloProvider>;
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };

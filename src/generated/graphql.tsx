@@ -21,6 +21,14 @@ export type ChangePasswordDto = {
   token: Scalars['String'];
 };
 
+export type CurrentUserResponseDto = {
+  __typename?: 'CurrentUserResponseDto';
+  avatar: Scalars['String'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  uuid: Scalars['String'];
+};
+
 export type ForgotPasswordDto = {
   email: Scalars['String'];
 };
@@ -53,9 +61,9 @@ export type GoogleCalendarEventsDefaultReminders = {
 
 export type GoogleCalendarEventsItems = {
   __typename?: 'GoogleCalendarEventsItems';
-  attendees: Array<GoogleCalendarEventsItemsAttendees>;
+  attendees?: Maybe<Array<GoogleCalendarEventsItemsAttendees>>;
   created: Scalars['String'];
-  creator: GoogleCalendarEventsItemsCreator;
+  creator?: Maybe<GoogleCalendarEventsItemsCreator>;
   end: GoogleCalendarEventsItemsEnd;
   etag: Scalars['String'];
   eventType: Scalars['String'];
@@ -63,8 +71,8 @@ export type GoogleCalendarEventsItems = {
   iCalUID: Scalars['String'];
   id: Scalars['String'];
   kind: Scalars['String'];
-  organizer: GoogleCalendarEventsItemsOrganizer;
-  reminders: Array<GoogleCalendarEventsItemsReminders>;
+  organizer?: Maybe<GoogleCalendarEventsItemsOrganizer>;
+  reminders: GoogleCalendarEventsItemsReminders;
   sequence: Scalars['Int'];
   start: GoogleCalendarEventsItemsStart;
   status: Scalars['String'];
@@ -74,16 +82,16 @@ export type GoogleCalendarEventsItems = {
 
 export type GoogleCalendarEventsItemsAttendees = {
   __typename?: 'GoogleCalendarEventsItemsAttendees';
-  additionalGuests: Scalars['Int'];
-  comment: Scalars['String'];
-  displayName: Scalars['String'];
-  email: Scalars['String'];
-  id: Scalars['String'];
-  optional: Scalars['Boolean'];
-  organizer: Scalars['Boolean'];
-  resource: Scalars['Boolean'];
-  responseStatus: Scalars['String'];
-  self: Scalars['Boolean'];
+  additionalGuests?: Maybe<Scalars['Int']>;
+  comment?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  optional?: Maybe<Scalars['Boolean']>;
+  organizer?: Maybe<Scalars['Boolean']>;
+  resource?: Maybe<Scalars['Boolean']>;
+  responseStatus?: Maybe<Scalars['String']>;
+  self?: Maybe<Scalars['Boolean']>;
 };
 
 export type GoogleCalendarEventsItemsCreator = {
@@ -167,7 +175,8 @@ export type MutationVerifyAccountArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  googleCalendarEvents: GoogleCalendarEvents;
+  currentUser: CurrentUserResponseDto;
+  googleCalendarEvents?: Maybe<GoogleCalendarEvents>;
 };
 
 export type SignInDto = {
@@ -190,7 +199,7 @@ export type UserResponseDto = {
   avatar: Scalars['String'];
   email: Scalars['String'];
   username: Scalars['String'];
-  uuid: Scalars['Float'];
+  uuid: Scalars['String'];
 };
 
 export type VerifyAccountDto = {
@@ -202,14 +211,14 @@ export type GoogleAuthMutationVariables = Exact<{
 }>;
 
 
-export type GoogleAuthMutation = { __typename?: 'Mutation', authenticateWithGoogle: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: number, avatar: string } };
+export type GoogleAuthMutation = { __typename?: 'Mutation', authenticateWithGoogle: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: string, avatar: string } };
 
 export type LoginMutationVariables = Exact<{
   signInInput: SignInDto;
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: number, avatar: string } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: string, avatar: string } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -219,14 +228,19 @@ export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 export type RefreshTokensMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RefreshTokensMutation = { __typename?: 'Mutation', refreshTokens: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: number, avatar: string } };
+export type RefreshTokensMutation = { __typename?: 'Mutation', refreshTokens: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: string, avatar: string } };
 
 export type RegisterMutationVariables = Exact<{
   signUpInput: SignUpDto;
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: number, avatar: string } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponseDto', accessToken: string, email: string, username: string, uuid: string, avatar: string } };
+
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'CurrentUserResponseDto', email: string, username: string, uuid: string, avatar: string } };
 
 export type GoogleCalendarActivationMutationVariables = Exact<{
   googleCalendarActivationInput: GoogleCalendarActivationDto;
@@ -238,12 +252,12 @@ export type GoogleCalendarActivationMutation = { __typename?: 'Mutation', activa
 export type GoogleCalendarEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GoogleCalendarEventsQuery = { __typename?: 'Query', googleCalendarEvents: { __typename?: 'GoogleCalendarEvents', items: Array<{ __typename?: 'GoogleCalendarEventsItems', summary: string, start: { __typename?: 'GoogleCalendarEventsItemsStart', dateTime: string, timeZone: string }, end: { __typename?: 'GoogleCalendarEventsItemsEnd', dateTime: string, timeZone: string } }> } };
+export type GoogleCalendarEventsQuery = { __typename?: 'Query', googleCalendarEvents?: { __typename?: 'GoogleCalendarEvents', items: Array<{ __typename?: 'GoogleCalendarEventsItems', summary: string, start: { __typename?: 'GoogleCalendarEventsItemsStart', dateTime: string, timeZone: string }, end: { __typename?: 'GoogleCalendarEventsItemsEnd', dateTime: string, timeZone: string } }> } | null };
 
 export type GoogleCalendarWeeklyTrendsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GoogleCalendarWeeklyTrendsQueryQuery = { __typename?: 'Query', googleCalendarEvents: { __typename?: 'GoogleCalendarEvents', items: Array<{ __typename?: 'GoogleCalendarEventsItems', summary: string, start: { __typename?: 'GoogleCalendarEventsItemsStart', dateTime: string, timeZone: string }, end: { __typename?: 'GoogleCalendarEventsItemsEnd', dateTime: string, timeZone: string }, organizer: { __typename?: 'GoogleCalendarEventsItemsOrganizer', email: string }, attendees: Array<{ __typename?: 'GoogleCalendarEventsItemsAttendees', email: string, displayName: string, organizer: boolean, self: boolean }> }> } };
+export type GoogleCalendarWeeklyTrendsQueryQuery = { __typename?: 'Query', googleCalendarEvents?: { __typename?: 'GoogleCalendarEvents', items: Array<{ __typename?: 'GoogleCalendarEventsItems', summary: string, start: { __typename?: 'GoogleCalendarEventsItemsStart', dateTime: string, timeZone: string }, end: { __typename?: 'GoogleCalendarEventsItemsEnd', dateTime: string, timeZone: string }, organizer?: { __typename?: 'GoogleCalendarEventsItemsOrganizer', email: string } | null, attendees?: Array<{ __typename?: 'GoogleCalendarEventsItemsAttendees', email?: string | null, displayName?: string | null, organizer?: boolean | null, self?: boolean | null }> | null }> } | null };
 
 
 export const GoogleAuthDocument = gql`
@@ -423,6 +437,43 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const CurrentUserDocument = gql`
+    query CurrentUser {
+  currentUser {
+    email
+    username
+    uuid
+    avatar
+  }
+}
+    `;
+
+/**
+ * __useCurrentUserQuery__
+ *
+ * To run a query within a React component, call `useCurrentUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
+      }
+export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
+        }
+export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
+export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
+export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
 export const GoogleCalendarActivationDocument = gql`
     mutation googleCalendarActivation($googleCalendarActivationInput: GoogleCalendarActivationDto!) {
   activateGoogleCalendar(

@@ -17,8 +17,8 @@ import { CodeResponse, googleLogout, useGoogleLogin } from '@react-oauth/google'
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext, AuthReducerAction } from '../../authentication/contexts/AuthContext';
-import { useGoogleCalendarActivationMutation, useLogoutMutation, useRefreshTokensMutation } from '../../generated/graphql';
+import { AuthContext } from '../../authentication/contexts/AuthContext';
+import { useGoogleCalendarActivationMutation, useLogoutMutation } from '../../generated/graphql';
 import theme from '../../theme';
 import LogoIcon from '../assets/LogoIcon';
 import Iconify from './Iconify';
@@ -33,7 +33,6 @@ const NavBar = () => {
   const location = useLocation();
   const { t } = useTranslation('common');
   const [activateGoogleCalendar] = useGoogleCalendarActivationMutation();
-  const [refreshTokens, { data: refreshTokenData }] = useRefreshTokensMutation();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -82,17 +81,7 @@ const NavBar = () => {
   };
 
   const logoutUser = async () => {
-    try {
-      await logout();
-    } catch (e) {
-      try {
-        await refreshTokens();
-        await logout();
-      } catch (e) {
-        localStorage.removeItem('accessToken');
-        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
-      }
-    }
+    await logout();
     googleLogout();
     navigate('/login');
   };

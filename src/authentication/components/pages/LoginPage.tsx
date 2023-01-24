@@ -2,28 +2,20 @@ import { Box, CircularProgress, Container } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRefreshTokensMutation } from '../../../generated/graphql';
-import { AuthContext, AuthReducerAction } from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import LoginForm from '../forms/LoginForm';
 
 function LoginPage() {
   const { user, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [refreshTokens, { loading }] = useRefreshTokensMutation();
+  const [refreshTokens, { loading, data, error }] = useRefreshTokensMutation();
 
   useEffect(() => {
     const fetchRefreshTokens = async () => {
-      try {
-        await refreshTokens();
-        navigate('/dashboard');
-      } catch (e) {
-        localStorage.removeItem('accessToken');
-        dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
-      }
+      await refreshTokens();
+      navigate('/dashboard');
     };
-    const accessToken = localStorage.getItem('accessToken');
-    if (!user || !accessToken) {
-      fetchRefreshTokens();
-    }
+    fetchRefreshTokens();
   }, []);
 
   return (
