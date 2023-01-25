@@ -1,6 +1,8 @@
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
+import authEnTranslation from './authentication/translations/en';
+import authFrTranslation from './authentication/translations/fr';
 import commonEnTranslation from './common/translations/en';
 import commonFrTranslation from './common/translations/fr';
 
@@ -11,9 +13,11 @@ i18n
     resources: {
       en: {
         common: commonEnTranslation,
+        auth: authEnTranslation,
       },
       fr: {
         common: commonFrTranslation,
+        auth: authFrTranslation,
       },
     },
     fallbackLng: 'en',

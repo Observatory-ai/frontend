@@ -1,23 +1,25 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link as MuiLink, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
 import { useGoogleAuthMutation, useRegisterMutation } from '../../../generated/graphql';
+import { signUpSchema } from '../../schemas/formSchemas';
 import { SignUpFormValues } from '../../types/formValues';
 import classes from './SignUpForm.styles';
 
 const SignUpForm = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { t } = useTranslation('common');
-  const [registerMutation, { data, loading, error }] = useRegisterMutation();
-  const [googleAuth, { data: googleData, loading: googleLoading, error: googleError }] = useGoogleAuthMutation();
+  const { t } = useTranslation(['common', 'auth']);
+  const [registerMutation, { data, error }] = useRegisterMutation();
+  const [googleAuth, { data: googleData }] = useGoogleAuthMutation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -29,9 +31,9 @@ const SignUpForm = () => {
     event.preventDefault();
   };
 
-  const { register, handleSubmit, formState } = useForm<SignUpFormValues>({
+  const { register, handleSubmit, formState, setError } = useForm<SignUpFormValues>({
     defaultValues: { firstName: '', lastName: '', username: '', email: '', password: '', confirmPassword: '' },
-    // resolver: yupResolver(signUpSchema),
+    resolver: yupResolver(signUpSchema),
   });
 
   const { isSubmitting, errors } = formState;
@@ -39,21 +41,38 @@ const SignUpForm = () => {
   const onSubmit = async (formValues: SignUpFormValues) => {
     const { firstName, lastName, email, username, password, confirmPassword } = formValues;
     await registerMutation({ variables: { signUpInput: { email, firstName, lastName, username, password, confirmPassword } } });
-    navigate('/dashboard');
   };
 
   const onGoogleAuthSuccess = async (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
-    try {
-      await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
-      navigate('/dashboard');
-    } catch (e: any) {
-      console.log(e);
-    }
+    await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
   };
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: onGoogleAuthSuccess,
   });
+
+  useEffect(() => {
+    if (error) {
+      error.graphQLErrors.forEach((err) => {
+        const response = err.extensions.response as { message: string | [] };
+        if (Array.isArray(response.message)) {
+          response.message.forEach((errorMessage: string) => {
+            const message = errorMessage.split(':');
+            setError(message[0] as any, { message: t(`errors.${message[1]}`, { ns: 'auth' }) });
+          });
+        } else {
+          const message = response.message.split(':');
+          setError(message[0] as any, { message: t(`errors.${message[1]}`, { ns: 'auth' }) });
+        }
+      });
+    }
+  }, [error, setError, t]);
+
+  useEffect(() => {
+    if (data || googleData) {
+      navigate('/dashboard');
+    }
+  }, [data, googleData, navigate]);
 
   return (
     <Container component="main" maxWidth="xs">

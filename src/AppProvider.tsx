@@ -56,7 +56,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         const refreshTokens = result.data?.refreshTokens;
         const googleAuth = result.data?.authenticateWithGoogle;
         const logout = result.data?.logout;
-        const currentUser = result.data?.currentUser;
 
         if (login) {
           const { accessToken, email, username, uuid, avatar } = login;

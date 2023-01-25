@@ -1,10 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link, Stack, TextField, Typography, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,11 +16,12 @@ import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
 
 export default function LoginForm() {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'auth']);
   const theme = useTheme();
   const navigate = useNavigate();
-  const [login, { data, loading, error }] = useLoginMutation();
-  const [googleAuth, { data: googleData, loading: googleLoading, error: googleError }] = useGoogleAuthMutation();
+  const [login, { data, error }] = useLoginMutation();
+  const [googleAuth, { data: googleData }] = useGoogleAuthMutation();
+  const [loginError, setLoginError] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,26 +41,31 @@ export default function LoginForm() {
   const { isSubmitting, errors } = formState;
   const onSubmit = async (formValues: LoginFormValues) => {
     const { usernameOrEmail, password } = formValues;
-    try {
-      await login({ variables: { signInInput: { emailOrUsername: usernameOrEmail, password } } });
-      navigate('/dashboard');
-    } catch (e: any) {
-      // setError('usernameOrEmail', { type: 'custom', message: e.message });
-    }
+    await login({ variables: { signInInput: { emailOrUsername: usernameOrEmail, password } } });
   };
 
   const onGoogleAuthSuccess = async (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
-    try {
-      await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
-      navigate('/dashboard');
-    } catch (e: any) {
-      console.log(e);
-    }
+    await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
   };
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: onGoogleAuthSuccess,
   });
+
+  useEffect(() => {
+    if (data || googleData) {
+      navigate('/dashboard');
+    }
+  }, [data, googleData, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      error.graphQLErrors.forEach((err) => {
+        const response = err.extensions.response as { message: string };
+        setLoginError(response.message.split(':')[1]);
+      });
+    }
+  }, [error, setError, t]);
 
   return (
     <Container maxWidth="xs">
@@ -83,6 +90,16 @@ export default function LoginForm() {
           OR
         </Typography>
       </Divider>
+      {loginError && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', alignItems: 'center' }}>
+          <Avatar sx={classes.errorIcon}>
+            <ErrorOutlineOutlinedIcon />
+          </Avatar>
+          <Typography sx={{ fontWeight: theme.typography.fontWeightBold, color: theme.palette.error.light }}>
+            {t(`errors.${loginError}`, { ns: 'auth' })}
+          </Typography>
+        </div>
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
           required
@@ -94,8 +111,7 @@ export default function LoginForm() {
           fullWidth
           placeholder="Username or Email"
           {...register('usernameOrEmail')}
-          error={!!errors.usernameOrEmail}
-          helperText={errors.usernameOrEmail ? errors.usernameOrEmail.message : null}
+          error={!!loginError}
         />
         <TextField
           required
@@ -106,8 +122,7 @@ export default function LoginForm() {
           fullWidth
           placeholder="Password"
           {...register('password')}
-          error={!!errors.password}
-          helperText={errors.password ? errors.password.message : null}
+          error={!!loginError}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
