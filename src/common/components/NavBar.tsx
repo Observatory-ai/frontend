@@ -1,7 +1,9 @@
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import ExtensionIcon from '@mui/icons-material/Extension';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -115,9 +117,9 @@ const NavBar = () => {
         <Typography>{t('menu.settings', { ns: 'common' })}</Typography>
       </MenuItem> */}
       <MenuItem component={Link} to="/" onClick={logoutUser}>
-        <IconButton size="small" aria-label="logout" color="inherit" onClick={logoutUser}>
-          <LogoutIcon />
-        </IconButton>
+        <Avatar sx={{ width: 28, height: 28, marginRight: theme.spacing(1) }}>
+          <LogoutOutlinedIcon />
+        </Avatar>
         <Typography>{t('menu.logout', { ns: 'common' })}</Typography>
       </MenuItem>
     </Menu>
@@ -215,6 +217,14 @@ const NavBar = () => {
                   <DashboardIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('pages.dashboard', { ns: 'common' })} sx={{ fontWeight: theme.typography.fontWeightBold }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={handleDashboardNavigation} selected={location.pathname === '/allServices'}>
+                <ListItemIcon>
+                  <ExtensionIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('pages.allServices', { ns: 'common' })} sx={{ fontWeight: theme.typography.fontWeightBold }} />
               </ListItemButton>
             </ListItem>
           </List>

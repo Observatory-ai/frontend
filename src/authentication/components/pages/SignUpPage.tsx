@@ -1,22 +1,25 @@
 import { Box, CircularProgress, Container } from '@mui/material';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRefreshTokensMutation } from '../../../generated/graphql';
-import { AuthContext } from '../../contexts/AuthContext';
 import SignUpForm from '../forms/SignUpForm';
 
 function SignupPage() {
-  const { user, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [refreshTokens, { loading }] = useRefreshTokensMutation();
+  const [refreshTokens, { data, loading }] = useRefreshTokensMutation();
 
   useEffect(() => {
     const fetchRefreshTokens = async () => {
       await refreshTokens();
-      navigate('/dashboard');
     };
     fetchRefreshTokens();
-  }, []);
+  }, [refreshTokens]);
+
+  useEffect(() => {
+    if (data?.refreshTokens) {
+      navigate('/dashboard');
+    }
+  }, [data, navigate]);
 
   return (
     <>

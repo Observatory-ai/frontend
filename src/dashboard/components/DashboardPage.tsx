@@ -1,5 +1,4 @@
 import * as charts from '../../common/components/Chart';
-import Layout from '../../common/layout/Layout';
 
 import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
@@ -662,7 +661,7 @@ const DashboardPage = () => {
   }, [weeklyTrendsData]);
 
   return (
-    <Layout>
+    <>
       {weeklyTrendsLoading ? <Skeleton variant="rectangular" height={200} sx={{ marginTop: '1rem' }} /> : <CardGrid {...newCardInsights} />}
       {weeklyTrendsLoading ? (
         <Skeleton variant="rectangular" height={500} sx={{ marginTop: '1rem' }} />
@@ -814,7 +813,7 @@ const DashboardPage = () => {
           </Grid>
         </Box>
       )}
-    </Layout>
+    </>
   );
 };
 

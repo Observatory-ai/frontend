@@ -16,8 +16,12 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       for (const err of graphQLErrors) {
         switch (err.extensions.code) {
           case 'UNAUTHENTICATED': {
-            if (operation.operationName === 'RefreshTokens') return;
-
+            if (operation.operationName === 'RefreshTokens') {
+              if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+              }
+              return;
+            }
             refreshToken().then((data) => {
               const oldHeaders = operation.getContext().headers;
               operation.setContext({
@@ -26,8 +30,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
                   authorization: data ? `Bearer ${data}` : '',
                 },
               });
+              return forward(operation);
             });
-            return forward(operation);
           }
         }
       }

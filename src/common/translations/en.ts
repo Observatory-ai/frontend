@@ -6,6 +6,7 @@ const button = {
 
 const pages = {
   dashboard: 'Dashboard',
+  allServices: 'All Services',
 };
 
 const services = {
