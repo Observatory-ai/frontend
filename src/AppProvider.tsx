@@ -7,6 +7,9 @@ import { RefreshTokensDocument } from './generated/graphql';
 type AppProviderProps = {
   children: React.ReactNode;
 };
+
+// TODO: use apollo client cache
+let jwtAccessToken = '';
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch } = useContext(AuthContext);
   const graphqlURI = process.env.REACT_APP_GRAPHQL as string;
@@ -42,13 +45,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const authLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers }: { headers: Headers }) => {
-      // TODO: find a way to pull this token from memory instead of local storage
-      // Example: apollo cache, context, etc.
-      const accessToken = localStorage.getItem('accessToken');
       return {
         headers: {
           ...headers,
-          authorization: accessToken ? `Bearer ${accessToken}` : '',
+          authorization: jwtAccessToken ? `Bearer ${jwtAccessToken}` : '',
         },
       };
     });
@@ -63,30 +63,30 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
         if (login) {
           const { accessToken, email, username, uuid, avatar } = login;
-          localStorage.setItem('accessToken', accessToken);
+          jwtAccessToken = accessToken;
           dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
         }
 
         if (register) {
           const { accessToken, email, username, uuid, avatar } = register;
-          localStorage.setItem('accessToken', accessToken);
+          jwtAccessToken = accessToken;
           dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
         }
 
         if (refreshTokens) {
           const { accessToken, email, username, uuid, avatar } = refreshTokens;
-          localStorage.setItem('accessToken', accessToken);
+          jwtAccessToken = accessToken;
           dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
         }
 
         if (googleAuth) {
           const { accessToken, email, username, uuid, avatar } = googleAuth;
-          localStorage.setItem('accessToken', accessToken);
+          jwtAccessToken = accessToken;
           dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
         }
 
         if (logout) {
-          localStorage.removeItem('accessToken');
+          jwtAccessToken = '';
           dispatch({ type: AuthReducerAction.logout, payload: { user: null } });
           client.resetStore();
         }
