@@ -604,6 +604,10 @@ const DashboardPage = () => {
 
   const [newStateObject, setNewStateObject] = useState(initialStateObject);
 
+  useEffect(() => {
+    console.log(newStateObject);
+  }, [newStateObject]);
+
   function processData() {
     let dataToChange: GoogleCalendarData[] | undefined = [];
     if (weeklyTrendsData) {
