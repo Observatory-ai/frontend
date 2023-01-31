@@ -7,7 +7,18 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Avatar, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Switch } from '@mui/material';
+import {
+  Avatar,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  Switch,
+} from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -15,19 +26,27 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { CodeResponse, googleLogout, useGoogleLogin } from '@react-oauth/google';
+import {
+  CodeResponse,
+  googleLogout,
+  useGoogleLogin,
+} from '@react-oauth/google';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../authentication/contexts/AuthContext';
-import { useGoogleCalendarActivationMutation, useLogoutMutation } from '../../generated/graphql';
+import {
+  useGoogleCalendarActivationMutation,
+  useLogoutMutation,
+} from '../../generated/graphql';
 import theme from '../../theme';
 import LogoIcon from '../assets/LogoIcon';
 import Iconify from './Iconify';
 
 const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
+    useState<null | HTMLElement>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { user, dispatch } = useContext(AuthContext);
   const [logout] = useLogoutMutation();
@@ -60,8 +79,14 @@ const NavBar = () => {
     setIsDrawerOpen((prev) => !prev);
   };
 
-  const handleGoogleCalendarActivation = (response: Omit<CodeResponse, 'error' | 'error_description' | 'error_uri'>) => {
-    activateGoogleCalendar({ variables: { googleCalendarActivationInput: { activationCode: response.code } } });
+  const handleGoogleCalendarActivation = (
+    response: Omit<CodeResponse, 'error' | 'error_description' | 'error_uri'>
+  ) => {
+    activateGoogleCalendar({
+      variables: {
+        googleCalendarActivationInput: { activationCode: response.code },
+      },
+    });
     // hasGrantedAllScopesGoogle(response, 'https://www.googleapis.com/auth/cloud-platform.read-only')
   };
 
@@ -72,7 +97,9 @@ const NavBar = () => {
     onSuccess: handleGoogleCalendarActivation,
   });
 
-  const handleGoogleCalendarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGoogleCalendarChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.checked) {
       requestGoogleCalendarAccess();
     }
@@ -103,7 +130,8 @@ const NavBar = () => {
         horizontal: 'right',
       }}
       open={isMenuOpen}
-      onClose={handleMenuClose}>
+      onClose={handleMenuClose}
+    >
       {/* <MenuItem onClick={handleMenuClose}>
         <IconButton size="small" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
           {user && user.avatar ? <Avatar alt={user.username} sx={{ width: 28, height: 28 }} src={user.avatar} /> : <AccountCircle />}
@@ -140,10 +168,25 @@ const NavBar = () => {
         horizontal: 'right',
       }}
       open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}>
+      onClose={handleMobileMenuClose}
+    >
       <MenuItem>
-        <IconButton size="large" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
-          {user && user.avatar ? <Avatar alt={user.username} sx={{ width: 28, height: 28 }} src={user.avatar} /> : <AccountCircle />}
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          {user && user.avatar ? (
+            <Avatar
+              alt={user.username}
+              sx={{ width: 28, height: 28 }}
+              src={user.avatar}
+            />
+          ) : (
+            <AccountCircle />
+          )}
         </IconButton>
         <Typography>{t('menu.profile', { ns: 'common' })}</Typography>
       </MenuItem>
@@ -154,7 +197,12 @@ const NavBar = () => {
         <Typography>{t('menu.settings', { ns: 'common' })}</Typography>
       </MenuItem>
       <MenuItem>
-        <IconButton size="large" aria-label="logout" color="inherit" onClick={logoutUser}>
+        <IconButton
+          size="large"
+          aria-label="logout"
+          color="inherit"
+          onClick={logoutUser}
+        >
           <LogoutIcon />
         </IconButton>
         <Typography>{t('menu.logout', { ns: 'common' })}</Typography>
@@ -169,18 +217,40 @@ const NavBar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <IconButton onClick={handleDrawerToggle} size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
+          <IconButton
+            onClick={handleDrawerToggle}
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            sx={{ mr: 2 }}
+          >
             {isDrawerOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+          <Box
+            sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}
+          >
             <LogoIcon width={40} height={40} viewBox="0, 0, 400,400" />
-            <Typography noWrap component="div" sx={{ ml: 2, fontSize: '1.35rem', fontFamily: 'Archivo, sans-serif' }}>
+            <Typography
+              noWrap
+              component="div"
+              sx={{
+                ml: 2,
+                fontSize: '1.35rem',
+                fontFamily: 'Archivo, sans-serif',
+              }}
+            >
               Observatory
             </Typography>
           </Box>
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+          <Box
+            sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}
+          >
             <Typography>{user && user.username}</Typography>
             <IconButton
               size="large"
@@ -189,12 +259,28 @@ const NavBar = () => {
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
-              color="inherit">
-              {user && user.avatar ? <Avatar alt={user.username} sx={{ width: 30, height: 30 }} src={user.avatar} /> : <AccountCircle />}
+              color="inherit"
+            >
+              {user && user.avatar ? (
+                <Avatar
+                  alt={user.username}
+                  sx={{ width: 30, height: 30 }}
+                  src={user.avatar}
+                />
+              ) : (
+                <AccountCircle />
+              )}
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton size="large" aria-label="show more" aria-controls={mobileMenuId} aria-haspopup="true" onClick={handleMobileMenuOpen} color="inherit">
+            <IconButton
+              size="large"
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
               <MoreIcon />
             </IconButton>
           </Box>
@@ -206,36 +292,64 @@ const NavBar = () => {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}>
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+      >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleDashboardNavigation} selected={location.pathname === '/dashboard'}>
+              <ListItemButton
+                onClick={handleDashboardNavigation}
+                selected={location.pathname === '/dashboard'}
+              >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary={t('pages.dashboard', { ns: 'common' })} sx={{ fontWeight: theme.typography.fontWeightBold }} />
+                <ListItemText
+                  primary={t('pages.dashboard', { ns: 'common' })}
+                  sx={{ fontWeight: theme.typography.fontWeightBold }}
+                />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleDashboardNavigation} selected={location.pathname === '/allServices'}>
+              <ListItemButton
+                onClick={handleDashboardNavigation}
+                selected={location.pathname === '/allServices'}
+              >
                 <ListItemIcon>
                   <ExtensionIcon />
                 </ListItemIcon>
-                <ListItemText primary={t('pages.allServices', { ns: 'common' })} sx={{ fontWeight: theme.typography.fontWeightBold }} />
+                <ListItemText
+                  primary={t('pages.allServices', { ns: 'common' })}
+                  sx={{ fontWeight: theme.typography.fontWeightBold }}
+                />
               </ListItemButton>
             </ListItem>
           </List>
           <Divider />
           <List>
-            <ListSubheader>{t('services.services', { ns: 'common' })}</ListSubheader>
+            <ListSubheader>
+              {t('services.services', { ns: 'common' })}
+            </ListSubheader>
             <ListItem disablePadding>
               <ListItemButton sx={{ marginTop: '0.5rem' }}>
                 <Iconify icon="logos:google-calendar" height={16} />
-                <ListItemText primary={t('services.googleCalendar', { ns: 'common' })} sx={{ mx: '0.5rem', fontWeight: theme.typography.fontWeightBold }} />
-                <Switch defaultChecked onChange={handleGoogleCalendarChange} edge="end" />
+                <ListItemText
+                  primary={t('services.googleCalendar', { ns: 'common' })}
+                  sx={{
+                    mx: '0.5rem',
+                    fontWeight: theme.typography.fontWeightBold,
+                  }}
+                />
+                <Switch
+                  defaultChecked
+                  onChange={handleGoogleCalendarChange}
+                  edge="end"
+                />
               </ListItemButton>
             </ListItem>
           </List>

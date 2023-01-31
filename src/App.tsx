@@ -8,7 +8,7 @@ import Router from './common/navigation/Router';
 import theme from './theme';
 
 const App = (): JSX.Element => {
-  const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID as string;
+  const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID as string;
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <ThemeProvider theme={theme}>

@@ -1,8 +1,21 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import { Avatar, Container, Divider, Grid, IconButton, InputAdornment, Link, Stack, TextField, Typography, useTheme } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {
+  Avatar,
+  Container,
+  Divider,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import Button from '@mui/material/Button';
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
@@ -10,7 +23,10 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../common/components/Iconify';
-import { useGoogleAuthMutation, useLoginMutation } from '../../../generated/graphql';
+import {
+  useGoogleAuthMutation,
+  useLoginMutation,
+} from '../../../generated/graphql';
 import { loginSchema } from '../../schemas/formSchemas';
 import { LoginFormValues } from '../../types/formValues';
 import classes from './LoginForm.styles';
@@ -29,23 +45,34 @@ export default function LoginForm() {
     setShowPassword(!showPassword);
   };
 
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
   };
 
-  const { register, handleSubmit, formState, setError } = useForm<LoginFormValues>({
-    defaultValues: { usernameOrEmail: '', password: '' },
-    resolver: yupResolver(loginSchema),
-  });
+  const { register, handleSubmit, formState, setError } =
+    useForm<LoginFormValues>({
+      defaultValues: { usernameOrEmail: '', password: '' },
+      resolver: yupResolver(loginSchema),
+    });
 
   const { isSubmitting, errors } = formState;
   const onSubmit = async (formValues: LoginFormValues) => {
     const { usernameOrEmail, password } = formValues;
-    await login({ variables: { signInInput: { emailOrUsername: usernameOrEmail, password } } });
+    await login({
+      variables: {
+        signInInput: { emailOrUsername: usernameOrEmail, password },
+      },
+    });
   };
 
-  const onGoogleAuthSuccess = async (response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
-    await googleAuth({ variables: { googleAuthInput: { accessToken: response.access_token } } });
+  const onGoogleAuthSuccess = async (
+    response: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>
+  ) => {
+    await googleAuth({
+      variables: { googleAuthInput: { accessToken: response.access_token } },
+    });
   };
 
   const loginWithGoogle = useGoogleLogin({
@@ -77,8 +104,19 @@ export default function LoginForm() {
           Log in
         </Typography>
       </div>
-      <Stack sx={{ marginTop: theme.spacing(4), width: '100%' }} direction="row" spacing={2}>
-        <Button onClick={() => loginWithGoogle()} id="google-signin-button" fullWidth size="large" color="inherit" variant="outlined">
+      <Stack
+        sx={{ marginTop: theme.spacing(4), width: '100%' }}
+        direction="row"
+        spacing={2}
+      >
+        <Button
+          onClick={() => loginWithGoogle()}
+          id="google-signin-button"
+          fullWidth
+          size="large"
+          color="inherit"
+          variant="outlined"
+        >
           <Iconify icon="eva:google-fill" color="#DF3E30" height={24} />
         </Button>
         <Button fullWidth size="large" color="inherit" variant="outlined">
@@ -91,11 +129,23 @@ export default function LoginForm() {
         </Typography>
       </Divider>
       {loginError && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '1rem',
+            alignItems: 'center',
+          }}
+        >
           <Avatar sx={classes.errorIcon}>
             <ErrorOutlineOutlinedIcon />
           </Avatar>
-          <Typography sx={{ fontWeight: theme.typography.fontWeightBold, color: theme.palette.error.light }}>
+          <Typography
+            sx={{
+              fontWeight: theme.typography.fontWeightBold,
+              color: theme.palette.error.light,
+            }}
+          >
             {t(`errors.${loginError}`, { ns: 'auth' })}
           </Typography>
         </div>
@@ -126,14 +176,25 @@ export default function LoginForm() {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             ),
           }}
         />
-        <Button type="submit" fullWidth disabled={isSubmitting} sx={classes.submit} variant="contained">
+        <Button
+          type="submit"
+          fullWidth
+          disabled={isSubmitting}
+          sx={classes.submit}
+          variant="contained"
+        >
           {t('button.login', { ns: 'common' })}
         </Button>
         <Grid>

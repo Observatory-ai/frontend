@@ -2,7 +2,15 @@ import * as charts from '../../common/components/Chart';
 
 import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
-import { Box, Card, Grid, IconButton, Skeleton, Tooltip, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  Grid,
+  IconButton,
+  Skeleton,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { Link, useLocation } from 'react-router-dom';
@@ -120,7 +128,9 @@ interface PieClientTeamData {
 function buildWeeklyTrendsData(data: GoogleCalendarData[]) {
   const today = new Date();
   const startOfTheWeek = new Date(new Date().setDate(today.getDate() - 30));
-  const endOfTheWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+  const endOfTheWeek = new Date(
+    today.setDate(today.getDate() - today.getDay() + 6)
+  );
 
   const weeklyTrendsData: CalendarEventData[] = [];
   data &&
@@ -132,21 +142,45 @@ function buildWeeklyTrendsData(data: GoogleCalendarData[]) {
         const startDate = new Date(event.start.dateTime);
         if (startDate > last30Date) {
           const endDate = new Date(event.end.dateTime);
-          const durationHours = (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
-          const durationMinutes = (endDate.getTime() - startDate.getTime()) / 1000 / 60;
+          const durationHours =
+            (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
+          const durationMinutes =
+            (endDate.getTime() - startDate.getTime()) / 1000 / 60;
 
           const eventDate = new Date(event.start.dateTime);
-          const lastSunday = new Date(eventDate.setDate(eventDate.getDate() - eventDate.getDay()));
-          const upcomingSaturday = new Date(eventDate.setDate(eventDate.getDate() - eventDate.getDay() + 6));
+          const lastSunday = new Date(
+            eventDate.setDate(eventDate.getDate() - eventDate.getDay())
+          );
+          const upcomingSaturday = new Date(
+            eventDate.setDate(eventDate.getDate() - eventDate.getDay() + 6)
+          );
           const dSunday = new String(lastSunday.getDate()).padStart(2, '0');
           const mSunday = String(lastSunday.getMonth() + 1).padStart(2, '0'); //January is 0!
           const ySunday = lastSunday.getFullYear();
 
-          const dSaturday = new String(upcomingSaturday.getDate()).padStart(2, '0');
-          const mSaturday = String(upcomingSaturday.getMonth() + 1).padStart(2, '0');
+          const dSaturday = new String(upcomingSaturday.getDate()).padStart(
+            2,
+            '0'
+          );
+          const mSaturday = String(upcomingSaturday.getMonth() + 1).padStart(
+            2,
+            '0'
+          );
           const ySaturday = upcomingSaturday.getFullYear();
 
-          const week = 'Week: ' + ySunday + '-' + mSunday + '-' + dSunday + ' to ' + ySaturday + '-' + mSaturday + '-' + dSaturday;
+          const week =
+            'Week: ' +
+            ySunday +
+            '-' +
+            mSunday +
+            '-' +
+            dSunday +
+            ' to ' +
+            ySaturday +
+            '-' +
+            mSaturday +
+            '-' +
+            dSaturday;
 
           weeklyTrendsData.push({
             week: week,
@@ -188,7 +222,10 @@ function buildLineData(weeklyData: CalendarEventData[]) {
   weeklyData.forEach((event) => {
     if (event.durationHours < 24) {
       if (event.week === currentWeek) {
-        weeksMeetings.set(event.weekDay.toString(), weeksMeetings.get(event.weekDay.toString())! + event.durationHours);
+        weeksMeetings.set(
+          event.weekDay.toString(),
+          weeksMeetings.get(event.weekDay.toString())! + event.durationHours
+        );
       } else {
         const xY = [] as { x: string; y: number }[];
         weeksMeetings.forEach((value, key) => {
@@ -245,7 +282,10 @@ function buildBarData(weeklyData: CalendarEventData[]) {
     if (event.durationHours < 24) {
       if (event.week === weekToTrack) {
         if (meetings.has(event.weekDay.toString())) {
-          meetings.set(event.weekDay.toString(), meetings.get(event.weekDay.toString())! + event.durationHours);
+          meetings.set(
+            event.weekDay.toString(),
+            meetings.get(event.weekDay.toString())! + event.durationHours
+          );
         } else {
           meetings.set(event.weekDay.toString(), event.durationHours);
         }
@@ -332,7 +372,10 @@ function buildVsPieData(teamData: PieClientTeamData) {
   return pieData;
 }
 
-function meetingWithAttendeeData(weeklyData: CalendarEventData[], userEmail: string) {
+function meetingWithAttendeeData(
+  weeklyData: CalendarEventData[],
+  userEmail: string
+) {
   // get user email domain
   const userDomain = userEmail.split('@')[1];
 
@@ -352,14 +395,20 @@ function meetingWithAttendeeData(weeklyData: CalendarEventData[], userEmail: str
             const attendeeDomain = attendee.email.split('@')[1];
             if (attendeeDomain === userDomain) {
               if (teamMap.has(attendee.email)) {
-                teamMap.set(attendee.email, teamMap.get(attendee.email)! + event.durationHours);
+                teamMap.set(
+                  attendee.email,
+                  teamMap.get(attendee.email)! + event.durationHours
+                );
               } else {
                 teamMap.set(attendee.email, event.durationHours);
               }
               totalTeamHours += event.durationHours;
             } else {
               if (clientMap.has(attendee.email)) {
-                clientMap.set(attendee.email, clientMap.get(attendee.email)! + event.durationHours);
+                clientMap.set(
+                  attendee.email,
+                  clientMap.get(attendee.email)! + event.durationHours
+                );
               } else {
                 clientMap.set(attendee.email, event.durationHours);
               }
@@ -371,8 +420,12 @@ function meetingWithAttendeeData(weeklyData: CalendarEventData[], userEmail: str
     }
   });
 
-  const sortedClientMap = new Map([...clientMap.entries()].sort((a, b) => b[1] - a[1]));
-  const sortedTeamMap = new Map([...teamMap.entries()].sort((a, b) => b[1] - a[1]));
+  const sortedClientMap = new Map(
+    [...clientMap.entries()].sort((a, b) => b[1] - a[1])
+  );
+  const sortedTeamMap = new Map(
+    [...teamMap.entries()].sort((a, b) => b[1] - a[1])
+  );
 
   let count = 0;
   if (sortedClientMap.size > 5) {
@@ -414,8 +467,10 @@ function meetingWithAttendeeData(weeklyData: CalendarEventData[], userEmail: str
 
 function checkWithinWorkHours(event: CalendarEventData, workHours: number[]) {
   if (
-    (event.end.getHours() < workHours[1] && event.start.getHours() > workHours[0]) ||
-    (event.end.getHours() > workHours[0] && event.start.getHours() < workHours[1])
+    (event.end.getHours() < workHours[1] &&
+      event.start.getHours() > workHours[0]) ||
+    (event.end.getHours() > workHours[0] &&
+      event.start.getHours() < workHours[1])
   ) {
     if (event.start.getDay() >= 1 && event.end.getDay() <= 5) return true;
   }
@@ -425,7 +480,9 @@ function computeFreeTime(timeSlots: string[][]) {
   let cur = '09:00';
   const freeTime = [];
   const week = timeSlots[0][2];
-  timeSlots.sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]));
+  timeSlots.sort(
+    (a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
+  );
   for (const slot of timeSlots) {
     if (cur >= '17:00') {
       break;
@@ -508,10 +565,16 @@ function buildCardInsights(weeklyData: CalendarEventData[], userEmail: string) {
   eventsWithinWorkHours.forEach((event) => {
     if (timeSlots.has(event.start.toDateString())) {
       const temp = timeSlots.get(event.start.toDateString())!;
-      temp.push([getTimeString(event.start), getTimeString(event.end), event.week]);
+      temp.push([
+        getTimeString(event.start),
+        getTimeString(event.end),
+        event.week,
+      ]);
       timeSlots.set(event.start.toDateString(), temp);
     } else {
-      timeSlots.set(event.start.toDateString(), [[getTimeString(event.start), getTimeString(event.end), event.week]]);
+      timeSlots.set(event.start.toDateString(), [
+        [getTimeString(event.start), getTimeString(event.end), event.week],
+      ]);
     }
   });
   timeSlots.forEach((value, key) => {
@@ -524,53 +587,105 @@ function buildCardInsights(weeklyData: CalendarEventData[], userEmail: string) {
       const startTime = new Date(key + ' ' + slot[0]);
       const endTime = new Date(key + ' ' + slot[1]);
       if (slot[2] === weekToTrack) {
-        freeTime.push(startTime.toDateString() + ': ' + slot[0] + ' - ' + slot[1]);
-        sumFreeDurationMinutes += (endTime.getTime() - startTime.getTime()) / 60000;
+        freeTime.push(
+          startTime.toDateString() + ': ' + slot[0] + ' - ' + slot[1]
+        );
+        sumFreeDurationMinutes +=
+          (endTime.getTime() - startTime.getTime()) / 60000;
       }
-      sum30DayFreeDurationMinutes += (endTime.getTime() - startTime.getTime()) / 60000;
+      sum30DayFreeDurationMinutes +=
+        (endTime.getTime() - startTime.getTime()) / 60000;
     });
   });
 
   const weeklyAvg = sumWeekDurationMinutes / 7;
-  const TIMString = Math.floor(weeklyAvg / 60) + 'h ' + Math.round(weeklyAvg % 60) + 'm';
-  const weeklyTotal = Math.floor(sumWeekDurationMinutes / 60) + 'h ' + (sumWeekDurationMinutes % 60) + 'm';
+  const TIMString =
+    Math.floor(weeklyAvg / 60) + 'h ' + Math.round(weeklyAvg % 60) + 'm';
+  const weeklyTotal =
+    Math.floor(sumWeekDurationMinutes / 60) +
+    'h ' +
+    (sumWeekDurationMinutes % 60) +
+    'm';
   const thirtyDayAvg = sum30DayDurationMinutes / 30;
-  const TIDString = Math.floor(thirtyDayAvg / 60) + 'h ' + Math.round(thirtyDayAvg % 60) + 'm';
+  const TIDString =
+    Math.floor(thirtyDayAvg / 60) + 'h ' + Math.round(thirtyDayAvg % 60) + 'm';
 
   const weeklyClientMeetings = sumWeekClientDurationMinutes / 7;
-  const TCMString = Math.floor(weeklyClientMeetings / 60) + 'h ' + Math.round(weeklyClientMeetings % 60) + 'm';
-  const weeklyClientMeetingsTotal = Math.floor(sumWeekClientDurationMinutes / 60) + 'h ' + Math.round(sumWeekClientDurationMinutes % 60) + 'm';
+  const TCMString =
+    Math.floor(weeklyClientMeetings / 60) +
+    'h ' +
+    Math.round(weeklyClientMeetings % 60) +
+    'm';
+  const weeklyClientMeetingsTotal =
+    Math.floor(sumWeekClientDurationMinutes / 60) +
+    'h ' +
+    Math.round(sumWeekClientDurationMinutes % 60) +
+    'm';
   const thirtyDayClientMeetings = sum30DayClientDurationMinutes / 30;
-  const TCMThirtyString = Math.floor(thirtyDayClientMeetings / 60) + 'h ' + Math.round(thirtyDayClientMeetings % 60) + 'm';
+  const TCMThirtyString =
+    Math.floor(thirtyDayClientMeetings / 60) +
+    'h ' +
+    Math.round(thirtyDayClientMeetings % 60) +
+    'm';
 
   const weeklyFreeTime = sumFreeDurationMinutes / 7;
-  const TFWString = Math.floor(weeklyFreeTime / 60) + 'h ' + Math.round(weeklyFreeTime % 60) + 'm';
-  const weeklyFreeTimeTotal = Math.floor(sumFreeDurationMinutes / 60) + 'h ' + Math.round(sumFreeDurationMinutes % 60) + 'm';
+  const TFWString =
+    Math.floor(weeklyFreeTime / 60) +
+    'h ' +
+    Math.round(weeklyFreeTime % 60) +
+    'm';
+  const weeklyFreeTimeTotal =
+    Math.floor(sumFreeDurationMinutes / 60) +
+    'h ' +
+    Math.round(sumFreeDurationMinutes % 60) +
+    'm';
   const thirtyDayFreeTime = sum30DayFreeDurationMinutes / 30;
-  const TFWThirtyString = Math.floor(thirtyDayFreeTime / 60) + 'h ' + Math.round(thirtyDayFreeTime % 60) + 'm';
+  const TFWThirtyString =
+    Math.floor(thirtyDayFreeTime / 60) +
+    'h ' +
+    Math.round(thirtyDayFreeTime % 60) +
+    'm';
 
-  const TIMPercentDiff = Math.round(((weeklyAvg - thirtyDayAvg) / thirtyDayAvg) * 100);
-  const TCMPercentDiff = Math.round(((weeklyClientMeetings - thirtyDayClientMeetings) / thirtyDayClientMeetings) * 100);
-  const TFWPercentDiff = Math.round(((weeklyFreeTime - thirtyDayFreeTime) / thirtyDayFreeTime) * 100);
+  const TIMPercentDiff = Math.round(
+    ((weeklyAvg - thirtyDayAvg) / thirtyDayAvg) * 100
+  );
+  const TCMPercentDiff = Math.round(
+    ((weeklyClientMeetings - thirtyDayClientMeetings) /
+      thirtyDayClientMeetings) *
+      100
+  );
+  const TFWPercentDiff = Math.round(
+    ((weeklyFreeTime - thirtyDayFreeTime) / thirtyDayFreeTime) * 100
+  );
 
   timeInMeetings.title = 'Time in Meetings';
   timeInMeetings.tooltip = 'Average time spent in meetings per day';
   timeInMeetings.metric = TIMString;
-  timeInMeetings.percentDiff = TIMPercentDiff > 0 ? '+' + TIMPercentDiff.toString() : TIMPercentDiff.toString();
+  timeInMeetings.percentDiff =
+    TIMPercentDiff > 0
+      ? '+' + TIMPercentDiff.toString()
+      : TIMPercentDiff.toString();
   timeInMeetings.weekTotal = weeklyTotal;
   timeInMeetings.avg = TIDString;
 
   clientMeetings.title = 'Client Meetings';
   clientMeetings.tooltip = 'Average time spent in client meetings per day';
   clientMeetings.metric = TCMString;
-  clientMeetings.percentDiff = TCMPercentDiff > 0 ? '+' + TCMPercentDiff.toString() : TCMPercentDiff.toString();
+  clientMeetings.percentDiff =
+    TCMPercentDiff > 0
+      ? '+' + TCMPercentDiff.toString()
+      : TCMPercentDiff.toString();
   clientMeetings.weekTotal = weeklyClientMeetingsTotal;
   clientMeetings.avg = TCMThirtyString;
 
   timeOutsideMeetings.title = 'Time Outside Meetings';
-  timeOutsideMeetings.tooltip = 'Average time spent outside of meetings per day within work hours';
+  timeOutsideMeetings.tooltip =
+    'Average time spent outside of meetings per day within work hours';
   timeOutsideMeetings.metric = TFWString;
-  timeOutsideMeetings.percentDiff = TFWPercentDiff > 0 ? '+' + TFWPercentDiff.toString() : TFWPercentDiff.toString();
+  timeOutsideMeetings.percentDiff =
+    TFWPercentDiff > 0
+      ? '+' + TFWPercentDiff.toString()
+      : TFWPercentDiff.toString();
   timeOutsideMeetings.weekTotal = weeklyFreeTimeTotal;
   timeOutsideMeetings.avg = TFWThirtyString;
   timeOutsideMeetings.timeSlots = freeTime;
@@ -584,12 +699,37 @@ const DashboardPage = () => {
   const { user } = useContext(AuthContext);
 
   const cardGridData = [
-    { title: 'Time in Meetings', tooltip: 'Shows meeting time', metric: '2h 30m', percentDiff: '-7', avg: '1h 5m', weekTotal: '15h' } as DataCardProps,
-    { title: 'Time without Meetings', tooltip: 'Shows free time', metric: '1h 30m', percentDiff: '-7', avg: '1h 5m', weekTotal: '15h' } as DataCardProps,
-    { title: 'Time with Clients', tooltip: 'Shows meeting time', metric: '1h 3m', percentDiff: '-7', avg: '1h 5m', weekTotal: '15h' } as DataCardProps,
+    {
+      title: 'Time in Meetings',
+      tooltip: 'Shows meeting time',
+      metric: '2h 30m',
+      percentDiff: '-7',
+      avg: '1h 5m',
+      weekTotal: '15h',
+    } as DataCardProps,
+    {
+      title: 'Time without Meetings',
+      tooltip: 'Shows free time',
+      metric: '1h 30m',
+      percentDiff: '-7',
+      avg: '1h 5m',
+      weekTotal: '15h',
+    } as DataCardProps,
+    {
+      title: 'Time with Clients',
+      tooltip: 'Shows meeting time',
+      metric: '1h 3m',
+      percentDiff: '-7',
+      avg: '1h 5m',
+      weekTotal: '15h',
+    } as DataCardProps,
   ];
 
-  const { loading: weeklyTrendsLoading, error: weeklyTrendsError, data: weeklyTrendsData } = useGoogleCalendarWeeklyTrendsQueryQuery();
+  const {
+    loading: weeklyTrendsLoading,
+    error: weeklyTrendsError,
+    data: weeklyTrendsData,
+  } = useGoogleCalendarWeeklyTrendsQueryQuery();
 
   const [newCardInsights, setNewCardInsights] = useState(cardGridData);
 
@@ -611,22 +751,30 @@ const DashboardPage = () => {
   function processData() {
     let dataToChange: GoogleCalendarData[] | undefined = [];
     if (weeklyTrendsData) {
-      dataToChange = weeklyTrendsData?.googleCalendarEvents?.items?.map((event) => {
-        return {
-          summary: event?.summary?.toString(),
-          start: { dateTime: event?.start?.dateTime?.toString(), timeZone: event?.start?.timeZone?.toString() },
-          end: { dateTime: event?.end?.dateTime?.toString(), timeZone: event?.end?.timeZone?.toString() },
-          organizer: { email: event?.organizer?.email?.toString() },
-          attendees: event?.attendees?.map((attendee) => {
-            return {
-              email: attendee?.email?.toString(),
-              displayName: attendee?.displayName?.toString(),
-              organizer: attendee?.organizer,
-              self: attendee?.self,
-            } as GoogleCalendarAttendee;
-          }, []),
-        } as GoogleCalendarData;
-      });
+      dataToChange = weeklyTrendsData?.googleCalendarEvents?.items?.map(
+        (event) => {
+          return {
+            summary: event?.summary?.toString(),
+            start: {
+              dateTime: event?.start?.dateTime?.toString(),
+              timeZone: event?.start?.timeZone?.toString(),
+            },
+            end: {
+              dateTime: event?.end?.dateTime?.toString(),
+              timeZone: event?.end?.timeZone?.toString(),
+            },
+            organizer: { email: event?.organizer?.email?.toString() },
+            attendees: event?.attendees?.map((attendee) => {
+              return {
+                email: attendee?.email?.toString(),
+                displayName: attendee?.displayName?.toString(),
+                organizer: attendee?.organizer,
+                self: attendee?.self,
+              } as GoogleCalendarAttendee;
+            }, []),
+          } as GoogleCalendarData;
+        }
+      );
     }
 
     const weeklyTrends = buildWeeklyTrendsData(dataToChange!);
@@ -637,10 +785,17 @@ const DashboardPage = () => {
 
     const newCardInsights = buildCardInsights(weeklyTrends!, user!.email);
 
-    const newCardGridData = [newCardInsights[0], newCardInsights[1], newCardInsights[2]];
+    const newCardGridData = [
+      newCardInsights[0],
+      newCardInsights[1],
+      newCardInsights[2],
+    ];
     setNewCardInsights(newCardGridData);
 
-    const meetingWithAttendeesData = meetingWithAttendeeData(weeklyTrends!, user!.email);
+    const meetingWithAttendeesData = meetingWithAttendeeData(
+      weeklyTrends!,
+      user!.email
+    );
 
     const newClientPieData = buildClientPieData(meetingWithAttendeesData);
 
@@ -666,18 +821,52 @@ const DashboardPage = () => {
 
   return (
     <>
-      {weeklyTrendsLoading ? <Skeleton variant="rectangular" height={200} sx={{ marginTop: '1rem' }} /> : <CardGrid {...newCardInsights} />}
       {weeklyTrendsLoading ? (
-        <Skeleton variant="rectangular" height={500} sx={{ marginTop: '1rem' }} />
+        <Skeleton
+          variant="rectangular"
+          height={200}
+          sx={{ marginTop: '1rem' }}
+        />
+      ) : (
+        <CardGrid {...newCardInsights} />
+      )}
+      {weeklyTrendsLoading ? (
+        <Skeleton
+          variant="rectangular"
+          height={500}
+          sx={{ marginTop: '1rem' }}
+        />
       ) : (
         <Box sx={{ paddingTop: '1rem' }}>
           <Card sx={{ minWidth: 275 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', paddingRight: '1rem', paddingLeft: '1rem' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingTop: '1rem',
+                paddingRight: '1rem',
+                paddingLeft: '1rem',
+              }}
+            >
               <Typography sx={{ fontWeight: 'bold' }} variant="h6">
                 This Week&apos;s Meetings by Day
               </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('4'), chartNo: '4', stateObject: newStateObject }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Link
+                  to={{ pathname: '/edit-chart' }}
+                  state={{
+                    data: newStateObject.get('4'),
+                    chartNo: '4',
+                    stateObject: newStateObject,
+                  }}
+                >
                   <IconButton aria-label="add chart">
                     <EditIcon />
                   </IconButton>
@@ -687,22 +876,52 @@ const DashboardPage = () => {
                 </Tooltip>
               </Box>
             </Box>
-            <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '3rem' }}>
-              <div style={{ height: '500px' }}>{charts.returnChart(newStateObject.get('4').chartType, newStateObject.get('4'))}</div>
+            <Box
+              sx={{
+                alignItems: 'center',
+                paddingRight: '1rem',
+                paddingLeft: '3rem',
+              }}
+            >
+              <div style={{ height: '500px' }}>
+                {charts.returnChart(
+                  newStateObject.get('4').chartType,
+                  newStateObject.get('4')
+                )}
+              </div>
             </Box>
           </Card>
         </Box>
       )}
       {weeklyTrendsLoading ? (
-        <Skeleton variant="rectangular" height={600} sx={{ marginTop: '1rem' }} />
+        <Skeleton
+          variant="rectangular"
+          height={600}
+          sx={{ marginTop: '1rem' }}
+        />
       ) : (
         <Box sx={{ paddingTop: '1rem' }}>
           <Card sx={{ minWidth: 275 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', paddingRight: '1rem', paddingLeft: '1rem' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingTop: '1rem',
+                paddingRight: '1rem',
+                paddingLeft: '1rem',
+              }}
+            >
               <Typography sx={{ fontWeight: 'bold' }} variant="h6">
                 Last 30 Days of Meetings
               </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
                 {/* <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('5'), chartNo: '5', stateObject }}>
                   <IconButton aria-label="add chart">
                     <EditIcon />
@@ -713,14 +932,29 @@ const DashboardPage = () => {
                 </Tooltip>
               </Box>
             </Box>
-            <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '1rem' }}>
-              <div style={{ height: '600px' }}>{charts.returnChart(newStateObject.get('5').chartType, newStateObject.get('5'))}</div>
+            <Box
+              sx={{
+                alignItems: 'center',
+                paddingRight: '1rem',
+                paddingLeft: '1rem',
+              }}
+            >
+              <div style={{ height: '600px' }}>
+                {charts.returnChart(
+                  newStateObject.get('5').chartType,
+                  newStateObject.get('5')
+                )}
+              </div>
             </Box>
           </Card>
         </Box>
       )}
       {weeklyTrendsLoading ? (
-        <Skeleton variant="rectangular" height={200} sx={{ marginTop: '1rem' }} />
+        <Skeleton
+          variant="rectangular"
+          height={200}
+          sx={{ marginTop: '1rem' }}
+        />
       ) : (
         <Box sx={{ paddingTop: '1rem', paddingBottom: '1rem', flexGrow: 1 }}>
           <Grid container spacing={2}>
@@ -734,12 +968,26 @@ const DashboardPage = () => {
                     paddingTop: '1rem',
                     paddingRight: '1rem',
                     paddingLeft: '1rem',
-                  }}>
+                  }}
+                >
                   <Typography sx={{ fontWeight: 'bold' }} variant="h6">
                     Client vs. Team Meetings
                   </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('6'), chartNo: '6', stateObject: newStateObject }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Link
+                      to={{ pathname: '/edit-chart' }}
+                      state={{
+                        data: newStateObject.get('6'),
+                        chartNo: '6',
+                        stateObject: newStateObject,
+                      }}
+                    >
                       <IconButton aria-label="add chart">
                         <EditIcon />
                       </IconButton>
@@ -749,8 +997,19 @@ const DashboardPage = () => {
                     </Tooltip>
                   </Box>
                 </Box>
-                <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '1rem' }}>
-                  <div style={{ height: '300px' }}>{charts.returnChart(newStateObject.get('6').chartType, newStateObject.get('6'))}</div>
+                <Box
+                  sx={{
+                    alignItems: 'center',
+                    paddingRight: '1rem',
+                    paddingLeft: '1rem',
+                  }}
+                >
+                  <div style={{ height: '300px' }}>
+                    {charts.returnChart(
+                      newStateObject.get('6').chartType,
+                      newStateObject.get('6')
+                    )}
+                  </div>
                 </Box>
               </Card>
             </Grid>
@@ -764,12 +1023,26 @@ const DashboardPage = () => {
                     paddingTop: '1rem',
                     paddingRight: '1rem',
                     paddingLeft: '1rem',
-                  }}>
+                  }}
+                >
                   <Typography sx={{ fontWeight: 'bold' }} variant="h6">
                     Time Spent with Clients
                   </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('7'), chartNo: '7', stateObject: newStateObject }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Link
+                      to={{ pathname: '/edit-chart' }}
+                      state={{
+                        data: newStateObject.get('7'),
+                        chartNo: '7',
+                        stateObject: newStateObject,
+                      }}
+                    >
                       <IconButton aria-label="add chart">
                         <EditIcon />
                       </IconButton>
@@ -779,8 +1052,19 @@ const DashboardPage = () => {
                     </Tooltip>
                   </Box>
                 </Box>
-                <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '1rem' }}>
-                  <div style={{ height: '300px' }}>{charts.returnChart(newStateObject.get('7').chartType, newStateObject.get('7'))}</div>
+                <Box
+                  sx={{
+                    alignItems: 'center',
+                    paddingRight: '1rem',
+                    paddingLeft: '1rem',
+                  }}
+                >
+                  <div style={{ height: '300px' }}>
+                    {charts.returnChart(
+                      newStateObject.get('7').chartType,
+                      newStateObject.get('7')
+                    )}
+                  </div>
                 </Box>
               </Card>
             </Grid>
@@ -794,12 +1078,26 @@ const DashboardPage = () => {
                     paddingTop: '1rem',
                     paddingRight: '1rem',
                     paddingLeft: '1rem',
-                  }}>
+                  }}
+                >
                   <Typography sx={{ fontWeight: 'bold' }} variant="h6">
                     Time Spent with Team
                   </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Link to={{ pathname: '/edit-chart' }} state={{ data: newStateObject.get('8'), chartNo: '8', stateObject: newStateObject }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Link
+                      to={{ pathname: '/edit-chart' }}
+                      state={{
+                        data: newStateObject.get('8'),
+                        chartNo: '8',
+                        stateObject: newStateObject,
+                      }}
+                    >
                       <IconButton aria-label="add chart">
                         <EditIcon />
                       </IconButton>
@@ -809,8 +1107,19 @@ const DashboardPage = () => {
                     </Tooltip>
                   </Box>
                 </Box>
-                <Box sx={{ alignItems: 'center', paddingRight: '1rem', paddingLeft: '1rem' }}>
-                  <div style={{ height: '300px' }}>{charts.returnChart(newStateObject.get('8').chartType, newStateObject.get('8'))}</div>
+                <Box
+                  sx={{
+                    alignItems: 'center',
+                    paddingRight: '1rem',
+                    paddingLeft: '1rem',
+                  }}
+                >
+                  <div style={{ height: '300px' }}>
+                    {charts.returnChart(
+                      newStateObject.get('8').chartType,
+                      newStateObject.get('8')
+                    )}
+                  </div>
                 </Box>
               </Card>
             </Grid>

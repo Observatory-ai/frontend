@@ -1,7 +1,16 @@
-import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  ApolloLink,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client';
 import { onError } from 'apollo-link-error';
 import { useContext } from 'react';
-import { AuthContext, AuthReducerAction } from './authentication/contexts/AuthContext';
+import {
+  AuthContext,
+  AuthReducerAction,
+} from './authentication/contexts/AuthContext';
 import { RefreshTokensDocument } from './generated/graphql';
 
 type AppProviderProps = {
@@ -12,36 +21,38 @@ type AppProviderProps = {
 let jwtAccessToken = '';
 export const AppProvider = ({ children }: AppProviderProps) => {
   const { dispatch } = useContext(AuthContext);
-  const graphqlURI = process.env.REACT_APP_GRAPHQL as string;
+  const graphqlURL = import.meta.env.VITE_GRAPHQL as string;
 
-  const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
-    if (graphQLErrors) {
-      for (const err of graphQLErrors) {
-        switch (err.extensions.code) {
-          case 'UNAUTHENTICATED': {
-            if (operation.operationName === 'RefreshTokens') {
-              if (window.location.pathname !== '/login') {
-                window.location.href = '/login';
+  const errorLink = onError(
+    ({ graphQLErrors, networkError, operation, forward }) => {
+      if (graphQLErrors) {
+        for (const err of graphQLErrors) {
+          switch (err.extensions.code) {
+            case 'UNAUTHENTICATED': {
+              if (operation.operationName === 'RefreshTokens') {
+                if (window.location.pathname !== '/login') {
+                  window.location.href = '/login';
+                }
+                return;
               }
-              return;
-            }
-            refreshToken().then((data) => {
-              const oldHeaders = operation.getContext().headers;
-              operation.setContext({
-                headers: {
-                  ...oldHeaders,
-                  authorization: data ? `Bearer ${data}` : '',
-                },
+              refreshToken().then((data) => {
+                const oldHeaders = operation.getContext().headers;
+                operation.setContext({
+                  headers: {
+                    ...oldHeaders,
+                    authorization: data ? `Bearer ${data}` : '',
+                  },
+                });
+                return forward(operation);
               });
-              return forward(operation);
-            });
+            }
           }
         }
       }
-    }
 
-    if (networkError) console.log(`[Network error]: ${networkError}`);
-  });
+      if (networkError) console.log(`[Network error]: ${networkError}`);
+    }
+  );
 
   const authLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers }: { headers: Headers }) => {
@@ -64,25 +75,37 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         if (login) {
           const { accessToken, email, username, uuid, avatar } = login;
           jwtAccessToken = accessToken;
-          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+          dispatch({
+            type: AuthReducerAction.setCredentials,
+            payload: { user: { email, username, uuid, avatar } },
+          });
         }
 
         if (register) {
           const { accessToken, email, username, uuid, avatar } = register;
           jwtAccessToken = accessToken;
-          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+          dispatch({
+            type: AuthReducerAction.setCredentials,
+            payload: { user: { email, username, uuid, avatar } },
+          });
         }
 
         if (refreshTokens) {
           const { accessToken, email, username, uuid, avatar } = refreshTokens;
           jwtAccessToken = accessToken;
-          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+          dispatch({
+            type: AuthReducerAction.setCredentials,
+            payload: { user: { email, username, uuid, avatar } },
+          });
         }
 
         if (googleAuth) {
           const { accessToken, email, username, uuid, avatar } = googleAuth;
           jwtAccessToken = accessToken;
-          dispatch({ type: AuthReducerAction.setCredentials, payload: { user: { email, username, uuid, avatar } } });
+          dispatch({
+            type: AuthReducerAction.setCredentials,
+            payload: { user: { email, username, uuid, avatar } },
+          });
         }
 
         if (logout) {
@@ -98,11 +121,15 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const httpLink = new HttpLink({
     credentials: 'include', // same-origin (same domains)
-    uri: graphqlURI,
+    uri: graphqlURL,
   });
 
   const client = new ApolloClient({
-    link: ApolloLink.from([errorLink as unknown as ApolloLink, authLink, httpLink]),
+    link: ApolloLink.from([
+      errorLink as unknown as ApolloLink,
+      authLink,
+      httpLink,
+    ]),
     cache: new InMemoryCache(),
     connectToDevTools: true,
   });

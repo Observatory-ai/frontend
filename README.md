@@ -7,21 +7,20 @@ Refer to the backend repository, as the backend code must be run alongside the f
 ## Installation
 
 ```bash
-$ yarn
+$ npm i
 ```
 
 ## Create environment file
 
 ```
-PORT=4000
-REACT_APP_GOOGLE_AUTH_CLIENT_ID=
-REACT_APP_HASURA=http://localhost:3000/graphql
+VITE_GOOGLE_AUTH_CLIENT_ID=
+VITE_GRAPHQL=http://localhost:3000/graphql
 ```
 
 ## Run the web client
 
 ```bash
 # development
-$ yarn generate
-$ yarn run start
+$ npm generate
+$ npm start
 ```
